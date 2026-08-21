@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexik | Транспортные новости</title>
+    <style>
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body {
+            margin: 0; padding: 16px; font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #111827, #0f172a);
+            background-size: 400% 400%; animation: gradientBG 12s ease infinite;
+            display: flex; align-items: center; justify-content: center; min-height: 95vh;
+        }
+        .container {
+            width: 100%; max-width: 440px; background: rgba(26, 26, 26, 0.85);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px; padding: 22px; box-sizing: border-box;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6); border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .section-title {
+            color: #94a3b8; font-weight: bold; font-size: 13px;
+            margin: 18px 0 8px 0; padding-left: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .status-item {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #222530; padding: 10px 14px; border-radius: 12px; margin-bottom: 6px;
+        }
+        .status-badge {
+            display: inline-block; width: 26px; height: 24px; border-radius: 6px;
+            color: white; font-weight: bold; font-size: 13px; text-align: center; line-height: 24px; margin-right: 10px;
+        }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+        .menu-btn {
+            display: flex; align-items: center; justify-content: space-between; color: white;
+            padding: 14px 16px; border-radius: 16px; text-decoration: none; font-weight: 500; font-size: 15px;
+            border: 1px solid #3a3a3c; background: #2c2c2e; box-sizing: border-box; width: 100%; cursor: pointer;
+        }
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal img { max-width: 95%; max-height: 85%; border-radius: 12px; }
+        .close-modal {
+            position: absolute; top: 20px; right: 20px; color: white; font-size: 32px; font-weight: bold;
+            width: 40px; height: 40px; text-align: center; line-height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Шапка с аватаркой из ТГ -->
+        <div style="display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #2a2a2a; padding-bottom: 16px; margin-bottom: 16px;">
+            <div style="width: 56px; height: 56px; border-radius: 50%; overflow: hidden; border: 2px solid #0088cc; box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);">
+                <img src="https://tgfeed.ru" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div>
+                <div style="color: white; font-weight: bold; font-size: 22px; letter-spacing: -0.5px;">Nexik</div>
+                <div style="color: #8e8e93; font-size: 14px; margin-top: 2px;">Транспортные новости</div>
+            </div>
+        </div>
+
+        <!-- Описание и цель -->
+        <div style="background: #2c2c2e; padding: 14px; border-radius: 16px; border: 1px solid #3a3a3c;">
+            <div style="color: #e5e5ea; font-size: 14px; line-height: 1.5; margin-bottom: 10px;">
+                Интересный канал о транспорте, очень надеюсь что он тебе понравится, подписывайся ❤️
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #ffb900; font-weight: 600; margin-bottom: 6px;">
+                <span>🎯 Цель: 50 подписчиков</span>
+                <span>47 / 50</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: #1e1e1e; border-radius: 4px; overflow: hidden;">
+                <div style="width: 94%; height: 100%; background: linear-gradient(90deg, #ffb900, #ff7700); border-radius: 4px;"></div>
+            </div>
+        </div>
+
+        <!-- Статус линий -->
+        <div class="section-title">Статус линий транспорта:</div>
+        <div style="margin-bottom: 16px;">
+            <div class="status-item"><div style="display: flex; align-items: center;"><span class="status-badge" style="background: #e76c1f;">D1</span><span style="color: white; font-size: 14px;">Одинцово — Лобня</span></div><div style="font-size: 13px; color: #10b981;"><span class="status-dot" style="background: #10b981;"></span>Штатно</div></div>
+            <div class="status-item"><div style="display: flex; align-items: center;"><span class="status-badge" style="background: #e6408d;">D2</span><span style="color: white; font-size: 14px;">Нахабино — Подольск</span></div><div style="font-size: 13px; color: #10b981;"><span class="status-dot" style="background: #10b981;"></span>Штатно</div></div>
+            <div class="status-item"><div style="display: flex; align-items: center;"><span class="status-badge" style="background: #e92323;">D3</span><span style="color: white; font-size: 14px;">Зеленоград — Раменское</span></div><div style="font-size: 13px; color: #10b981;"><span class="status-dot" style="background: #10b981;"></span>Штатно</div></div>
+            <div class="status-item"><div style="display: flex; align-items: center;"><span class="status-badge" style="background: #4ab2ac;">D4</span><span style="color: white; font-size: 14px;">Апрелевка — Железнодорожный</span></div><div style="font-size: 13px; color: #10b981;"><span class="status-dot" style="background: #10b981;"></span>Штатно</div></div>
+            <div class="status-item"><div style="display: flex; align-items: center;"><span class="status-badge" style="background: #0088cc; font-size: 11px;">🚇</span><span style="color: white; font-size: 14px;">Метрополитен</span></div><div style="font-size: 13px; color: #10b981;"><span class="status-dot" style="background: #10b981;"></span>Штатно</div></div>
+        </div>
+
+        <!-- Схемы -->
+        <div class="section-title">Схемы во весь экран:</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+            <button class="menu-btn" onclick="openMap('metro')" style="padding: 12px; border-radius: 12px; font-size: 14px; justify-content: center;"><span>🗺️ Карта Метро</span></button>
+            <button class="menu-btn" onclick="openMap('mcd')" style="padding: 12px; border-radius: 12px; font-size: 14px; justify-content: center;"><span>🚆 Карта МЦД</span></button>
+        </div>
+
+        <!-- Кнопки -->
+        <div class="section-title">Ссылки проекта:</div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <a href="tg://resolve?domain=Nexik3" style="background: #0088cc; font-weight: 600; border: none;" class="menu-btn"><span>📱 Читать основной канал</span><span>➔</span></a>
+            <a href="tg://resolve?domain=Nexik_predlozhka_bot" class="menu-btn"><span>🤖 Бот / Предложка новостей</span><span>➔</span></a>
+            <a href="tg://resolve?domain=Nexik3&boost" style="background: #8a3ffc; border: none; font-weight: 600;" class="menu-btn"><span>⚡ Проголосовать за канал</span><span>⚡</span></a>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+                <a href="https://vk.ru" target="_blank" style="display: block; text-align: center; background: #0077ff; color: white; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 500; font-size: 14px;">Мы в ВК</a>
+                <a href="https://youtube.com" target="_blank" style="display: block; text-align: center; background: #ff0000; color: white; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 500; font-size: 14px;">YouTube</a>
+                <a href="https://max.ru" target="_blank" style="display: block; text-align: center; background: #334155; color: white; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 500; font-size: 14px;">Мы в МАКС</a>
+                <a href="https://transphoto.org" target="_blank" style="display: block; text-align: center; background: #0f766e; color: white; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 500; font-size: 14px;">TransPhoto</a>
+            </div>
+        </div>
+        <div style="text-align: center; color: #8e8e93; font-size: 11px; margin-top: 20px; border-top: 1px solid #2a2a2a; padding-top: 12px;">© 2026 Nexik. Все права защищены.</div>
+    </div>
+
+    <!-- Модальное окно карт -->
+    <div id="mapModal" class="modal"><span class="close-modal" onclick="closeMap()">&times;</span><img id="modalImg" src="" alt="Карта"></div>
+
+    <script>
+    const maps = {
+        metro: 'https://localway.ru',
+        mcd: 'https://mosmetro.ru'
+    };
+    function openMap(type) {
+        document.getElementById('modalImg').src = maps[type];
+        document.getElementById('mapModal').style.display = 'flex';
+    }
+    function closeMap() { document.getElementById('mapModal').style.display = 'none'; }
+    document.getElementById('mapModal').onclick = function(e) { if (e.target === this) closeMap(); };
+    </script>
+</body>
+</html>
