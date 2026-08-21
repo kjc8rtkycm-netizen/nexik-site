@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Nexik — Транспортные новости</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #0b0e14;
+            color: #f0f4fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px 16px 40px;
+        }
+        .container {
+            max-width: 480px;
+            width: 100%;
+            background: rgba(20, 26, 36, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 24px 20px 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.06);
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background: linear-gradient(135deg, #0b0e14 0%, #1a1f2b 40%, #0f1a2b 80%, #0b0e14 100%);
+            background-size: 400% 400%;
+            animation: gradShift 18s ease infinite;
+        }
+        @keyframes gradShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #2a3344;
+            border: 2px solid rgba(255,255,255,0.15);
+            flex-shrink: 0;
+        }
+        .title-group h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #b0c7ff, #7aa9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .title-group p {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-top: 2px;
+            letter-spacing: 0.3px;
+        }
+        .goal-block {
+            background: rgba(255,255,255,0.04);
+            border-radius: 20px;
+            padding: 18px 16px 20px;
+            margin-bottom: 28px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .goal-block p {
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            opacity: 0.9;
+        }
+        .progress-wrap {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .progress-bar {
+            flex: 1;
+            height: 10px;
+            background: #2a3344;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+        }
+        .progress-fill {
+            width: 94%;
+            height: 100%;
+            background: linear-gradient(90deg, #3b8eff, #7aa9ff);
+            border-radius: 20px;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 12px rgba(59, 142, 255, 0.4);
+        }
+        .progress-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #b0c7ff;
+            white-space: nowrap;
+        }
+        .status-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 16px;
+            margin-bottom: 16px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            padding: 16px 14px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        .status-dot.ok {
+            background: #2ecc71;
+            box-shadow: 0 0 10px #2ecc71aa;
+        }
+        .status-dot.problem {
+            background: #e74c3c;
+            box-shadow: 0 0 10px #e74c3caa;
+        }
+        .status-item .status-text {
+            margin-left: auto;
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.8;
+            transition: color 0.3s;
+        }
+        .status-item .status-text.ok {
+            color: #7ddfa0;
+        }
+        .status-item .status-text.problem {
+            color: #ff8a80;
+        }
+        .alert-box {
+            background: #4a1a1a;
+            border-left: 4px solid #e74c3c;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 28px;
+            color: #ffcdd2;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.15);
+            display: none;
+        }
+        .alert-box.show {
+            display: block;
+        }
+        .alert-box strong {
+            color: #ff8a80;
+        }
+        .nav-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .nav-btn {
+            padding: 14px 0;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            color: #e8edf5;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .nav-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.08); }
+        .nav-btn small {
+            font-size: 10px;
+            opacity: 0.5;
+            font-weight: 400;
+        }
+        .ext-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .ext-links a {
+            color: #8fadcc;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+            transition: color 0.2s;
+            border-bottom: 1px dotted transparent;
+        }
+        .ext-links a:active { color: #b0c7ff; border-color: #b0c7ff; }
+
+        /* Панель управления — скрыта по умолчанию */
+        .admin-panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: none;
+        }
+        .admin-panel.visible {
+            display: block;
+        }
+        .admin-panel h3 {
+            font-size: 14px;
+            opacity: 0.6;
+            margin-bottom: 12px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        .admin-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .admin-row:last-child {
+            border-bottom: none;
+        }
+        .admin-row .line-name {
+            font-weight: 600;
+            font-size: 15px;
+            width: 50px;
+        }
+        .admin-row .status-btns {
+            display: flex;
+            gap: 8px;
+        }
+        .admin-row .status-btns button {
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: transparent;
+            color: #aaa;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .admin-row .status-btns button:active { transform: scale(0.95); }
+        .admin-row .status-btns button.ok-btn.active {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            color: #fff;
+        }
+        .admin-row .status-btns button.problem-btn.active {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: #fff;
+        }
+
+        /* Кнопка-шестерёнка для входа */
+        .gear-btn {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.2);
+            font-size: 22px;
+            cursor: pointer;
+            transition: color 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            padding: 4px 8px;
+        }
+        .gear-btn:active { color: rgba(255,255,255,0.5); }
+
+        /* Поле ввода пароля */
+        .password-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .password-overlay.active {
+            display: flex;
+        }
+        .password-box {
+            background: #1a1f2b;
+            padding: 30px 24px;
+            border-radius: 24px;
+            max-width: 340px;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+        }
+        .password-box h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .password-box input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: #0b0e14;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 16px;
+            outline: none;
+        }
+        .password-box input:focus {
+            border-color: #3b8eff;
+        }
+        .password-box .btn-row {
+            display: flex;
+            gap: 12px;
+        }
+        .password-box .btn-row button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .password-box .btn-row .submit-btn {
+            background: #3b8eff;
+            color: #fff;
+        }
+        .password-box .btn-row .submit-btn:active { background: #2a6fd4; }
+        .password-box .btn-row .cancel-btn {
+            background: rgba(255,255,255,0.08);
+            color: #aaa;
+        }
+        .password-box .btn-row .cancel-btn:active { background: rgba(255,255,255,0.15); }
+        .password-error {
+            color: #ff8a80;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 8px;
+            display: none;
+        }
+        .password-error.show {
+            display: block;
+        }
+
+        @media (max-width: 420px) {
+            .container { padding: 18px 14px 24px; }
+            .header { gap: 12px; }
+            .avatar { width: 60px; height: 60px; }
+            .title-group h1 { font-size: 22px; }
+            .status-list { grid-template-columns: 1fr 1fr; gap: 8px 12px; padding: 12px 10px; }
+            .nav-grid { grid-template-columns: 1fr 1fr; }
+            .nav-grid .nav-btn:last-child { grid-column: span 2; }
+            .admin-row .line-name { width: 40px; font-size: 13px; }
+            .admin-row .status-btns button { padding: 3px 10px; font-size: 12px; }
+            .gear-btn { top: 12px; right: 14px; font-size: 20px; }
+        }
+        @media (max-width: 380px) {
+            .status-list { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Кнопка-шестерёнка для вызова ввода пароля -->
+    <button class="gear-btn" id="gearBtn">⚙️</button>
+
+    <!-- Панель управления (скрыта, пока не введён пароль) -->
+    <div class="admin-panel" id="adminPanel">
+        <h3>⚙️ Управление статусами (админ)</h3>
+        <div id="adminControls"></div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="header">
+        <img class="avatar" src="https://t.me/Nexik3/photo" alt="Nexik" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%232a3344%22/%3E%3Ctext x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%238fadcc%22 font-size=%2240%22 font-family=%22Arial%22%3EN%3C/text%3E%3C/svg%3E'">
+        <div class="title-group">
+            <h1>Nexik</h1>
+            <p>Транспортные новости</p>
+        </div>
+    </div>
+
+    <!-- GOAL + PROGRESS -->
+    <div class="goal-block">
+        <p>🚇 Интересный канал о транспорте, расписаниях, развитии сети и городской мобильности. Присоединяйся!</p>
+        <div class="progress-wrap">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width:94%"></div>
+            </div>
+            <span class="progress-label">47 / 50</span>
+        </div>
+    </div>
+
+    <!-- STATUS LINES -->
+    <div class="status-list" id="statusList"></div>
+
+    <!-- КРАСНЫЙ БЛОК -->
+    <div class="alert-box" id="alertBox">
+        <strong>⚠️ Внимание!</strong> Имеются перебои в движении поездов на линиях: <span id="problemLines"></span>.
+    </div>
+
+    <!-- TELEGRAM NAV -->
+    <div class="nav-grid">
+        <a class="nav-btn" href="tg://resolve?domain=Nexik3">📢 Канал <small>читать</small></a>
+        <a class="nav-btn" href="tg://resolve?domain=Nexik_predlozhka_bot">🤖 Бот <small>предложка</small></a>
+        <a class="nav-btn" href="tg://resolve?domain=Nexik3&boost">⭐ Проголосовать</a>
+    </div>
+
+    <!-- EXTERNAL LINKS -->
+    <div class="ext-links">
+        <a href="https://vk.ru" target="_blank">VK</a>
+        <a href="https://youtube.com" target="_blank">YouTube</a>
+        <a href="https://max.ru" target="_blank">МАКС</a>
+        <a href="https://transphoto.org" target="_blank">TransPhoto</a>
+    </div>
+</div>
+
+<!-- Модальное окно для ввода пароля -->
+<div class="password-overlay" id="passwordOverlay">
+    <div class="password-box">
+        <h3>🔐 Введите пароль</h3>
+        <input type="password" id="passwordInput" placeholder="Пароль администратора">
+        <div class="password-error" id="passwordError">Неверный пароль</div>
+        <div class="btn-row">
+            <button class="cancel-btn" id="cancelPassword">Отмена</button>
+            <button class="submit-btn" id="submitPassword">Войти</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- ПАРОЛЬ (изменён на ваш) -----
+        const ADMIN_PASSWORD = 'NexikTop0102';
+
+        // ----- НАЧАЛЬНЫЕ СТАТУСЫ (все штатно, но вы можете изменить) -----
+        let lines = [
+            { name: 'D1', status: 'ok' },
+            { name: 'D2', status: 'ok' },
+            { name: 'D3', status: 'ok' },
+            { name: 'D4', status: 'ok' },
+            { name: 'Метрополитен', status: 'ok' }
+        ];
+
+        // ----- ЭЛЕМЕНТЫ -----
+        const statusList = document.getElementById('statusList');
+        const alertBox = document.getElementById('alertBox');
+        const problemLinesSpan = document.getElementById('problemLines');
+        const adminPanel = document.getElementById('adminPanel');
+        const adminControls = document.getElementById('adminControls');
+        const gearBtn = document.getElementById('gearBtn');
+        const passwordOverlay = document.getElementById('passwordOverlay');
+        const passwordInput = document.getElementById('passwordInput');
+        const passwordError = document.getElementById('passwordError');
+        const submitBtn = document.getElementById('submitPassword');
+        const cancelBtn = document.getElementById('cancelPassword');
+
+        let isAdmin = false;
+
+        // ----- ОТРИСОВКА СТАТУСОВ (основная) -----
+        function renderStatuses() {
+            statusList.innerHTML = '';
+            let problemNames = [];
+
+            lines.forEach(line => {
+                const item = document.createElement('div');
+                item.className = 'status-item';
+
+                const dot = document.createElement('span');
+                dot.className = `status-dot ${line.status}`;
+
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = line.name;
+
+                const textSpan = document.createElement('span');
+                const label = line.status === 'ok' ? 'Штатно' : 'Перебои';
+                textSpan.className = `status-text ${line.status}`;
+                textSpan.textContent = label;
+
+                item.appendChild(dot);
+                item.appendChild(nameSpan);
+                item.appendChild(textSpan);
+                statusList.appendChild(item);
+
+                if (line.status === 'problem') {
+                    problemNames.push(line.name);
+                }
+            });
+
+            if (problemNames.length > 0) {
+                alertBox.classList.add('show');
+                problemLinesSpan.textContent = problemNames.join(', ');
+            } else {
+                alertBox.classList.remove('show');
+            }
+
+            if (isAdmin) {
+                renderAdminPanel();
+            }
+        }
+
+        // ----- АДМИН-ПАНЕЛЬ -----
+        function renderAdminPanel() {
+            adminControls.innerHTML = '';
+            lines.forEach((line, index) => {
+                const row = document.createElement('div');
+                row.className = 'admin-row';
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'line-name';
+                nameSpan.textContent = line.name;
+
+                const btns = document.createElement('div');
+                btns.className = 'status-btns';
+
+                const okBtn = document.createElement('button');
+                okBtn.textContent = 'Штатно';
+                okBtn.className = `ok-btn ${line.status === 'ok' ? 'active' : ''}`;
+                okBtn.addEventListener('click', () => {
+                    lines[index].status = 'ok';
+                    renderStatuses();
+                });
+
+                const problemBtn = document.createElement('button');
+                problemBtn.textContent = 'Перебои';
+                problemBtn.className = `problem-btn ${line.status === 'problem' ? 'active' : ''}`;
+                problemBtn.addEventListener('click', () => {
+                    lines[index].status = 'problem';
+                    renderStatuses();
+                });
+
+                btns.appendChild(okBtn);
+                btns.appendChild(problemBtn);
+                row.appendChild(nameSpan);
+                row.appendChild(btns);
+                adminControls.appendChild(row);
+            });
+        }
+
+        // ----- ОКНО ПАРОЛЯ -----
+        function showPasswordOverlay() {
+            passwordOverlay.classList.add('active');
+            passwordInput.value = '';
+            passwordError.classList.remove('show');
+            passwordInput.focus();
+        }
+        function hidePasswordOverlay() {
+            passwordOverlay.classList.remove('active');
+        }
+
+        function tryLogin() {
+            const pass = passwordInput.value.trim();
+            if (pass === ADMIN_PASSWORD) {
+                isAdmin = true;
+                adminPanel.classList.add('visible');
+                renderAdminPanel();
+                hidePasswordOverlay();
+            } else {
+                passwordError.classList.add('show');
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+
+        // ----- ОБРАБОТЧИКИ -----
+        gearBtn.addEventListener('click', showPasswordOverlay);
+        cancelBtn.addEventListener('click', hidePasswordOverlay);
+        submitBtn.addEventListener('click', tryLogin);
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') tryLogin();
+        });
+        passwordOverlay.addEventListener('click', (e) => {
+            if (e.target === passwordOverlay) hidePasswordOverlay();
+        });
+
+        // ----- ЗАПУСК -----
+        renderStatuses();
+    })();
+</script>
+</body>
+</html>
