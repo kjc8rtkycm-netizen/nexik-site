@@ -1,0 +1,2472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Nexik — Транспортные новости v.2.2</title>
+    <style>
+        /* ============================================================
+           ОСНОВНЫЕ СТИЛИ (iOS 26 стиль)
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px 16px 40px;
+            background: #eef2f7;
+            color: #1a1f2b;
+            position: relative;
+            transition: background 0.6s ease, color 0.6s ease;
+            overflow-x: hidden;
+        }
+
+        body.dark {
+            background: #0b0e14;
+            color: #e8edf5;
+        }
+
+        body.dark .container {
+            background: rgba(20, 26, 36, 0.85);
+            backdrop-filter: blur(16px);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        body.dark .title-group h1 {
+            color: #b0c7ff;
+        }
+
+        body.dark .title-group p {
+            color: #8a9fc0;
+        }
+
+        body.dark .goal-block {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        body.dark .goal-block p {
+            color: #c0d0e0;
+        }
+
+        body.dark .status-list {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        body.dark .status-item {
+            color: #c8dcec;
+        }
+
+        body.dark .nav-btn {
+            background: rgba(255, 255, 255, 0.06);
+            color: #c0d8ec;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        body.dark .facts-block .fact-display {
+            background: rgba(255, 255, 255, 0.05);
+            color: #c0d8ec;
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        body.dark .social-grid {
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        body.dark .admin-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        body.dark .admin-row {
+            border-color: rgba(255, 255, 255, 0.04);
+        }
+
+        body.dark .password-box {
+            background: #1a1f2b;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark .password-box h3 {
+            color: #e8edf5;
+        }
+
+        body.dark .password-box input {
+            background: #0b0e14;
+            color: #e8edf5;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark .password-box .btn-row .cancel-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #aaa;
+        }
+
+        body.dark .quiz-block .answers button {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.08);
+            color: #c0d8ec;
+        }
+
+        /* ===== ОСНОВНОЙ КОНТЕЙНЕР (стеклянный эффект) ===== */
+        .container {
+            max-width: 480px;
+            width: 100%;
+            border-radius: 32px;
+            padding: 24px 20px 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 10;
+            transition: background 0.6s ease, color 0.6s ease, border-color 0.6s ease;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        body.dark .container {
+            background: rgba(20, 26, 36, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* ===== ШАПКА ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #d0d8e4;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            flex-shrink: 0;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .title-group h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: none;
+            -webkit-text-fill-color: currentColor;
+            color: #1a2a3a;
+        }
+
+        .title-group p {
+            font-size: 14px;
+            opacity: 0.6;
+            margin-top: 2px;
+            letter-spacing: 0.3px;
+            color: #2c3e50;
+        }
+
+        /* ===== БАННЕР ОБНОВЫ (столбик) ===== */
+        .update-banner {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 30px rgba(106, 17, 203, 0.3);
+            display: none;
+            animation: slideDown 0.6s ease;
+            position: relative;
+        }
+
+        .update-banner.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .update-banner .title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .update-banner .list {
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .update-banner .list li {
+            list-style: none;
+        }
+
+        .update-banner .list li::before {
+            content: "• ";
+            color: #ffd700;
+        }
+
+        .update-banner .close-banner {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .update-banner .close-banner:hover {
+            opacity: 1;
+        }
+
+        /* ===== ЦЕЛЬ И ПРОГРЕСС ===== */
+        .goal-block {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 18px 16px 20px;
+            margin-bottom: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        body.dark .goal-block {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .goal-block p {
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            color: #1e2a36;
+        }
+
+        .goal-block p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .progress-wrap {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 8px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-fill {
+            width: 94%;
+            height: 100%;
+            background: linear-gradient(90deg, #2a7de1, #5a9eff);
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        .progress-label {
+            font-size: 15px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* ===== СТАТУСЫ (В СТОЛБИК) ===== */
+        .status-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 16px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        body.dark .status-list {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            min-height: 32px;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        body.dark .status-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: background 0.3s, box-shadow 0.3s;
+            border: 2px solid #ccc;
+        }
+
+        .status-dot.ok {
+            background: #2ecc71;
+            box-shadow: 0 0 10px #2ecc71aa;
+            border-color: #2ecc71;
+        }
+
+        .status-dot.problem {
+            background: #e74c3c;
+            box-shadow: 0 0 10px #e74c3caa;
+            border-color: #e74c3c;
+        }
+
+        .status-item .status-text {
+            margin-left: auto;
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.8;
+            transition: color 0.3s;
+        }
+
+        .status-item .status-text.ok {
+            color: #27ae60;
+        }
+
+        .status-item .status-text.problem {
+            color: #c0392b;
+        }
+
+        /* Цветные точки для метро */
+        .status-dot.metro {
+            border-width: 2px;
+        }
+
+        /* ===== КРАСНЫЙ БЛОК (ПЕРЕБОИ) ===== */
+        .alert-box {
+            background: rgba(253, 232, 232, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-left: 4px solid #e74c3c;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 28px;
+            color: #922b21;
+            font-size: 14px;
+            line-height: 1.5;
+            display: none;
+            transition: all 0.3s;
+        }
+
+        body.dark .alert-box {
+            background: rgba(40, 10, 10, 0.5);
+        }
+
+        .alert-box.show {
+            display: block;
+            animation: blinkBorder 1.2s infinite alternate;
+        }
+
+        @keyframes blinkBorder {
+            0% {
+                border-left-color: #e74c3c;
+                box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
+            }
+            100% {
+                border-left-color: #ff6b6b;
+                box-shadow: 0 0 30px rgba(231, 76, 60, 0.6);
+            }
+        }
+
+        .alert-box strong {
+            color: #c0392b;
+        }
+
+        /* ===== НАВИГАЦИЯ (ТГ) ===== */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .nav-btn {
+            padding: 14px 0;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: #1a2a3a;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        body.dark .nav-btn {
+            background: rgba(255, 255, 255, 0.06);
+            color: #c0d8ec;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        body.dark .nav-btn:active {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .nav-btn small {
+            font-size: 10px;
+            opacity: 0.5;
+            font-weight: 400;
+        }
+
+        /* ===== СОЦИАЛЬНЫЕ КНОПКИ (полупрозрачные) ===== */
+        .social-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        body.dark .social-grid {
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 10px;
+            border-radius: 16px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            transition: transform 0.1s, opacity 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .social-btn:active {
+            transform: scale(0.96);
+            opacity: 0.8;
+        }
+
+        .social-btn .icon {
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .social-btn.vk {
+            background: rgba(76, 117, 163, 0.8);
+        }
+        .social-btn.youtube {
+            background: rgba(255, 0, 0, 0.8);
+        }
+        .social-btn.max {
+            background: rgba(255, 102, 0, 0.8);
+        }
+        .social-btn.transphoto {
+            background: rgba(0, 136, 204, 0.8);
+        }
+
+        body.dark .social-btn.vk {
+            background: rgba(76, 117, 163, 0.5);
+        }
+        body.dark .social-btn.youtube {
+            background: rgba(255, 0, 0, 0.5);
+        }
+        body.dark .social-btn.max {
+            background: rgba(255, 102, 0, 0.5);
+        }
+        body.dark .social-btn.transphoto {
+            background: rgba(0, 136, 204, 0.5);
+        }
+
+        /* ===== ФАКТЫ ===== */
+        .facts-block {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        body.dark .facts-block {
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .facts-block .fact-btn {
+            background: rgba(42, 125, 225, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 4px 20px rgba(42, 125, 225, 0.2);
+        }
+
+        body.dark .facts-block .fact-btn {
+            background: rgba(42, 125, 225, 0.5);
+        }
+
+        .facts-block .fact-btn:active {
+            transform: scale(0.95);
+            background: rgba(26, 95, 176, 0.9);
+        }
+
+        .facts-block .fact-display {
+            margin-top: 12px;
+            font-size: 15px;
+            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 14px 16px;
+            min-height: 50px;
+            transition: opacity 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark .facts-block .fact-display {
+            background: rgba(255, 255, 255, 0.05);
+            color: #c0d8ec;
+        }
+
+        /* ===== ВИКТОРИНА ===== */
+        .quiz-block {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        body.dark .quiz-block {
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .quiz-block .question {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .quiz-block .answers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .quiz-block .answers button {
+            padding: 12px 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            color: #1a2a3a;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        body.dark .quiz-block .answers button {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.08);
+            color: #c0d8ec;
+        }
+
+        .quiz-block .answers button:active {
+            transform: scale(0.96);
+        }
+
+        .quiz-block .answers button.correct {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            color: #fff;
+        }
+
+        .quiz-block .answers button.wrong {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: #fff;
+        }
+
+        .quiz-block .quiz-score {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* ============================================================
+           АДМИН-ПАНЕЛЬ (скрыта, отдельно)
+           ============================================================ */
+        .admin-panel {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        body.dark .admin-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .admin-panel.visible {
+            display: block;
+        }
+
+        .admin-panel h3 {
+            font-size: 14px;
+            opacity: 0.6;
+            margin-bottom: 12px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark .admin-row {
+            border-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .admin-row:last-child {
+            border-bottom: none;
+        }
+
+        .admin-row .line-name {
+            font-weight: 600;
+            font-size: 15px;
+            width: 50px;
+        }
+
+        .admin-row .status-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .admin-row .status-btns button {
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            color: #1a2a3a;
+        }
+
+        body.dark .admin-row .status-btns button {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.08);
+            color: #c0d8ec;
+        }
+
+        .admin-row .status-btns button:active {
+            transform: scale(0.95);
+        }
+
+        .admin-row .status-btns button.ok-btn.active {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            color: #fff;
+        }
+
+        .admin-row .status-btns button.problem-btn.active {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: #fff;
+        }
+
+        /* ============================================================
+           КНОПКИ В ШАПКЕ (отдельно: вход и админ)
+           ============================================================ */
+        .top-buttons {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .gear-btn,
+        .login-btn {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        body.dark .gear-btn,
+        body.dark .login-btn {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .gear-btn:active,
+        .login-btn:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        body.dark .gear-btn:active,
+        body.dark .login-btn:active {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .login-btn.logged-in {
+            color: #2ecc71 !important;
+        }
+
+        .theme-btn {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        body.dark .theme-btn {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .theme-btn:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        body.dark .theme-btn:active {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .user-greeting {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            font-size: 12px;
+            opacity: 0.6;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: none;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        body.dark .user-greeting {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .user-greeting.show {
+            display: block;
+        }
+
+        /* ============================================================
+           МОДАЛКА ВХОДА / РЕГИСТРАЦИИ
+           ============================================================ */
+        .auth-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .auth-overlay.active {
+            display: flex;
+        }
+
+        .auth-box {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            padding: 30px 24px;
+            border-radius: 24px;
+            max-width: 340px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark .auth-box {
+            background: rgba(20, 26, 36, 0.6);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-box h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            text-align: center;
+            color: #1a2a3a;
+        }
+
+        body.dark .auth-box h3 {
+            color: #e8edf5;
+        }
+
+        .auth-box input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #1a2a3a;
+            font-size: 16px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        body.dark .auth-box input {
+            background: rgba(255, 255, 255, 0.06);
+            color: #e8edf5;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-box input:focus {
+            border-color: #2a7de1;
+        }
+
+        .auth-box .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .auth-box .btn-row button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .auth-box .btn-row .submit-btn {
+            background: rgba(42, 125, 225, 0.8);
+            color: #fff;
+        }
+
+        .auth-box .btn-row .submit-btn:active {
+            background: rgba(26, 95, 176, 0.9);
+        }
+
+        .auth-box .btn-row .cancel-btn {
+            background: rgba(255, 255, 255, 0.3);
+            color: #1a2a3a;
+        }
+
+        body.dark .auth-box .btn-row .cancel-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #aaa;
+        }
+
+        .auth-box .btn-row .cancel-btn:active {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        body.dark .auth-box .btn-row .cancel-btn:active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .auth-error {
+            color: #e74c3c;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .auth-error.show {
+            display: block;
+        }
+
+        .auth-mode-toggle {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 14px;
+            color: #2a7de1;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .auth-mode-toggle:hover {
+            opacity: 1;
+        }
+
+        body.dark .auth-mode-toggle {
+            color: #5a9eff;
+        }
+
+        /* ============================================================
+           СЦЕНА С ПОЕЗДОМ (старый паровоз с дымом)
+           ============================================================ */
+        .train-scene {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+            background: linear-gradient(180deg, #b8d4e8 0%, #8bc34a 30%, #6a9e3b 50%, #4a7a2e 70%, #3d6b24 100%);
+            border-top: 3px solid #5d7a3a;
+        }
+
+        body.dark .train-scene {
+            background: linear-gradient(180deg, #1a2a3a 0%, #2a4a3a 30%, #1a3a2a 50%, #0a2a1a 70%, #0a1a0a 100%);
+            border-top-color: #2a4a3a;
+        }
+
+        body.dark .train-scene .sky {
+            background: linear-gradient(180deg, #0a1a2a 0%, #1a2a3a 100%);
+        }
+
+        body.dark .train-scene .sun {
+            background: radial-gradient(circle, #ffecb3, #ffb300);
+            box-shadow: 0 0 40px #ffb30044;
+        }
+
+        body.dark .train-scene .cloud {
+            background: rgba(100, 120, 140, 0.3);
+        }
+
+        .train-scene .sky {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(180deg, #87CEEB 0%, #b8d4e8 100%);
+        }
+
+        .train-scene .sun {
+            position: absolute;
+            top: 8px;
+            right: 30px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fff7b0, #fdd835);
+            box-shadow: 0 0 40px #fdd835aa;
+        }
+
+        .train-scene .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50px;
+            height: 18px;
+        }
+
+        .train-scene .cloud1 {
+            width: 50px;
+            top: 10px;
+            left: 20px;
+        }
+
+        .train-scene .cloud2 {
+            width: 70px;
+            top: 4px;
+            right: 80px;
+            height: 22px;
+        }
+
+        .train-scene .cloud3 {
+            width: 40px;
+            top: 18px;
+            left: 100px;
+            height: 14px;
+        }
+
+        .train-scene .trees {
+            position: absolute;
+            bottom: 35%;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 10px;
+        }
+
+        .train-scene .tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .train-scene .tree .trunk {
+            width: 6px;
+            height: 20px;
+            background: #5d3a1a;
+            border-radius: 2px;
+        }
+
+        body.dark .train-scene .tree .trunk {
+            background: #3d2a1a;
+        }
+
+        .train-scene .tree .crown {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 30% 30%, #66bb6a, #388e3c);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            margin-bottom: -4px;
+            box-shadow: 0 4px 20px rgba(56, 142, 60, 0.3);
+        }
+
+        body.dark .train-scene .tree .crown {
+            background: radial-gradient(circle at 30% 30%, #2a5a2a, #1a3a1a);
+            box-shadow: 0 4px 20px rgba(26, 58, 26, 0.3);
+        }
+
+        .train-scene .tree.small .crown {
+            width: 20px;
+            height: 20px;
+        }
+
+        .train-scene .tree.small .trunk {
+            height: 12px;
+            width: 4px;
+        }
+
+        .train-scene .tree.tall .crown {
+            width: 40px;
+            height: 35px;
+        }
+
+        .train-scene .tree.tall .trunk {
+            height: 28px;
+        }
+
+        .train-scene .rails {
+            position: absolute;
+            bottom: 24px;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: #5d4037;
+            border-top: 2px solid #8d6e63;
+            border-bottom: 2px solid #4e342e;
+        }
+
+        body.dark .train-scene .rails {
+            background: #2a1a1a;
+            border-top-color: #4a3a3a;
+            border-bottom-color: #1a0a0a;
+        }
+
+        .train-scene .rails::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: repeating-linear-gradient(90deg, #8d6e63 0px, #8d6e63 8px, transparent 8px, transparent 20px);
+        }
+
+        body.dark .train-scene .rails::before {
+            background: repeating-linear-gradient(90deg, #4a3a3a 0px, #4a3a3a 8px, transparent 8px, transparent 20px);
+        }
+
+        .train-scene .rails::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: repeating-linear-gradient(90deg, #4e342e 0px, #4e342e 8px, transparent 8px, transparent 20px);
+        }
+
+        body.dark .train-scene .rails::after {
+            background: repeating-linear-gradient(90deg, #1a0a0a 0px, #1a0a0a 8px, transparent 8px, transparent 20px);
+        }
+
+        .train-scene .sleepers {
+            position: absolute;
+            bottom: 22px;
+            left: 0;
+            right: 0;
+            height: 12px;
+        }
+
+        .train-scene .sleepers::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: repeating-linear-gradient(90deg, #6d4c41 0px, #6d4c41 4px, transparent 4px, transparent 30px);
+            opacity: 0.5;
+        }
+
+        body.dark .train-scene .sleepers::before {
+            background: repeating-linear-gradient(90deg, #2a1a1a 0px, #2a1a1a 4px, transparent 4px, transparent 30px);
+        }
+
+        /* Старый паровоз (тормозящий, с дымом) */
+        .train-scene .train {
+            position: absolute;
+            bottom: 24px;
+            left: -200px;
+            display: flex;
+            align-items: flex-end;
+            animation: trainRide 25s ease-in-out infinite;
+        }
+
+        @keyframes trainRide {
+            0% {
+                left: -200px;
+                opacity: 0.8;
+            }
+            10% {
+                left: 20px;
+                opacity: 1;
+            }
+            80% {
+                left: calc(100vw - 250px);
+                opacity: 1;
+            }
+            100% {
+                left: calc(100vw + 50px);
+                opacity: 0.6;
+            }
+        }
+
+        .train-scene .train .locomotive {
+            width: 100px;
+            height: 44px;
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+            border-radius: 8px 20px 4px 4px;
+            border: 2px solid #444;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark .train-scene .train .locomotive {
+            background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+            border-color: #555;
+        }
+
+        /* Труба */
+        .train-scene .train .locomotive .chimney {
+            position: absolute;
+            top: -16px;
+            left: 20px;
+            width: 12px;
+            height: 16px;
+            background: #333;
+            border-radius: 2px 2px 4px 4px;
+            border: 1px solid #555;
+        }
+
+        body.dark .train-scene .train .locomotive .chimney {
+            background: #444;
+            border-color: #666;
+        }
+
+        /* Дым */
+        .train-scene .train .locomotive .smoke {
+            position: absolute;
+            top: -25px;
+            left: 10px;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, rgba(200, 200, 200, 0.5), transparent);
+            border-radius: 50%;
+            animation: smokePuff 2.5s ease-out infinite;
+        }
+
+        @keyframes smokePuff {
+            0% {
+                transform: translate(0, 0) scale(0.5);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(-30px, -80px) scale(4);
+                opacity: 0;
+            }
+        }
+
+        .train-scene .train .locomotive .smoke:nth-child(2) {
+            left: 40px;
+            animation-delay: 1.2s;
+        }
+
+        .train-scene .train .locomotive .smoke:nth-child(3) {
+            left: 60px;
+            animation-delay: 2.0s;
+        }
+
+        /* Окна */
+        .train-scene .train .locomotive .windows {
+            display: flex;
+            gap: 6px;
+            padding: 8px 10px;
+        }
+
+        .train-scene .train .locomotive .windows .win {
+            width: 14px;
+            height: 16px;
+            background: radial-gradient(circle at 30% 30%, #ffd54f, #ff8f00);
+            border-radius: 3px 3px 6px 6px;
+            border: 1px solid #555;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark .train-scene .train .locomotive .windows .win {
+            background: radial-gradient(circle at 30% 30%, #ffb300, #e65100);
+            border-color: #666;
+        }
+
+        /* Фара */
+        .train-scene .train .locomotive .headlight {
+            position: absolute;
+            left: -4px;
+            top: 14px;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #fff9c4, #fdd835);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #fdd835, 0 0 60px #fdd83544;
+        }
+
+        body.dark .train-scene .train .locomotive .headlight {
+            background: radial-gradient(circle, #ffecb3, #ffb300);
+            box-shadow: 0 0 20px #ffb300, 0 0 60px #ffb30022;
+        }
+
+        /* Вагоны */
+        .train-scene .train .carriage {
+            width: 80px;
+            height: 38px;
+            background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+            border: 2px solid #444;
+            border-radius: 4px 8px 4px 4px;
+            border-left: 2px solid #444;
+            margin-left: -1px;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark .train-scene .train .carriage {
+            background: linear-gradient(180deg, #4a4a4a 0%, #3a3a3a 100%);
+            border-color: #555;
+        }
+
+        .train-scene .train .carriage .windows {
+            display: flex;
+            gap: 8px;
+            padding: 6px 10px;
+        }
+
+        .train-scene .train .carriage .windows .win {
+            width: 12px;
+            height: 14px;
+            background: radial-gradient(circle at 30% 30%, #ffd54f, #ff8f00);
+            border-radius: 3px 3px 6px 6px;
+            border: 1px solid #555;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark .train-scene .train .carriage .windows .win {
+            background: radial-gradient(circle at 30% 30%, #ffb300, #e65100);
+            border-color: #666;
+        }
+
+        /* ============================================================
+           АДАПТИВ
+           ============================================================ */
+        @media (max-width: 420px) {
+            .container {
+                padding: 18px 14px 24px;
+            }
+
+            .header {
+                gap: 12px;
+            }
+
+            .avatar {
+                width: 60px;
+                height: 60px;
+            }
+
+            .title-group h1 {
+                font-size: 22px;
+            }
+
+            .status-item {
+                font-size: 13px;
+                min-height: 28px;
+            }
+
+            .status-dot {
+                width: 12px;
+                height: 12px;
+            }
+
+            .nav-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .nav-grid .nav-btn:last-child {
+                grid-column: span 2;
+            }
+
+            .social-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .social-btn {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
+
+            .social-btn .icon {
+                font-size: 20px;
+            }
+
+            .top-buttons {
+                top: 12px;
+                right: 14px;
+                gap: 6px;
+            }
+
+            .gear-btn,
+            .theme-btn,
+            .login-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 16px;
+            }
+
+            .user-greeting {
+                top: 50px;
+                right: 14px;
+                font-size: 10px;
+            }
+
+            .train-scene {
+                height: 80px;
+            }
+
+            .train-scene .train .locomotive {
+                width: 70px;
+                height: 32px;
+            }
+
+            .train-scene .train .carriage {
+                width: 55px;
+                height: 28px;
+            }
+
+            .train-scene .train .locomotive .windows .win {
+                width: 10px;
+                height: 12px;
+            }
+
+            .train-scene .train .carriage .windows .win {
+                width: 10px;
+                height: 12px;
+            }
+
+            .train-scene .tree .crown {
+                width: 20px;
+                height: 20px;
+            }
+
+            .train-scene .tree.tall .crown {
+                width: 28px;
+                height: 25px;
+            }
+
+            .train-scene .tree .trunk {
+                height: 12px;
+            }
+
+            .train-scene .tree.tall .trunk {
+                height: 18px;
+            }
+
+            .train-scene .sun {
+                width: 20px;
+                height: 20px;
+                top: 6px;
+                right: 20px;
+            }
+
+            .train-scene .cloud1 {
+                width: 30px;
+                height: 12px;
+            }
+
+            .train-scene .cloud2 {
+                width: 40px;
+                height: 14px;
+            }
+
+            .train-scene .cloud3 {
+                width: 25px;
+                height: 10px;
+            }
+
+            @keyframes trainRide {
+                0% {
+                    left: -160px;
+                }
+                10% {
+                    left: 0px;
+                }
+                80% {
+                    left: calc(100vw - 160px);
+                }
+                100% {
+                    left: calc(100vw + 50px);
+                }
+            }
+        }
+
+        @media (max-width: 380px) {
+            .status-item {
+                font-size: 12px;
+            }
+
+            .train-scene .train .locomotive {
+                width: 60px;
+                height: 28px;
+            }
+
+            .train-scene .train .carriage {
+                width: 45px;
+                height: 24px;
+            }
+
+            .train-scene .train .locomotive .windows {
+                padding: 4px 6px;
+                gap: 4px;
+            }
+
+            .train-scene .train .carriage .windows {
+                padding: 4px 6px;
+                gap: 4px;
+            }
+
+            .train-scene .train .locomotive .windows .win {
+                width: 8px;
+                height: 10px;
+            }
+
+            .train-scene .train .carriage .windows .win {
+                width: 8px;
+                height: 10px;
+            }
+
+            @keyframes trainRide {
+                0% {
+                    left: -140px;
+                }
+                10% {
+                    left: 0px;
+                }
+                80% {
+                    left: calc(100vw - 140px);
+                }
+                100% {
+                    left: calc(100vw + 50px);
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== БАННЕР ОБНОВЫ ===== -->
+    <div class="update-banner" id="updateBanner">
+        <button class="close-banner" id="closeBanner">✕</button>
+        <div class="title">🚀 Обнова v.2.2 вышла!</div>
+        <ul class="list">
+            <li>Линии теперь в столбик (не вбок)</li>
+            <li>Админ-панель скрыта и отделена от входа</li>
+            <li>Баннер обновы в столбик</li>
+            <li>Старый паровоз с дымом (тормозящий)</li>
+            <li>Интерфейс как в iOS 26 (стекло, отражения)</li>
+        </ul>
+    </div>
+
+    <!-- ===== ОСНОВНОЙ КОНТЕЙНЕР ===== -->
+    <div class="container">
+
+        <!-- Кнопки в шапке -->
+        <div class="top-buttons">
+            <button class="login-btn" id="loginBtn" title="Войти">👤</button>
+            <button class="theme-btn" id="themeBtn" title="Переключить тему">🌓</button>
+            <button class="gear-btn" id="gearBtn" title="Админ-панель">⚙️</button>
+        </div>
+        <div class="user-greeting" id="userGreeting"></div>
+
+        <!-- Админ-панель -->
+        <div class="admin-panel" id="adminPanel">
+            <h3>⚙️ Управление статусами (админ)</h3>
+            <div id="adminControls"></div>
+        </div>
+
+        <!-- Шапка -->
+        <div class="header">
+            <img class="avatar" src="https://t.me/Nexik3/photo" alt="Nexik">
+            <div class="title-group">
+                <h1>Nexik</h1>
+                <p>Транспортные новости</p>
+            </div>
+        </div>
+
+        <!-- Цель и прогресс -->
+        <div class="goal-block">
+            <p>Интересный канал о транспорте, очень надеюсь что он тебе понравится, подписывайся❤️</p>
+            <p style="font-weight: 500; color: #1a2a3a;">Наша цель 50 подписчиков 😊</p>
+            <div class="progress-wrap">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:94%"></div>
+                </div>
+                <span class="progress-label">47 / 50</span>
+            </div>
+        </div>
+
+        <!-- СТАТУСЫ (будут заполнены через JS) -->
+        <div class="status-list" id="statusList"></div>
+
+        <!-- Красный блок (перебои) -->
+        <div class="alert-box" id="alertBox">
+            <strong>⚠️ Внимание!</strong> Имеются перебои в движении поездов на линиях: <span id="problemLines"></span>.
+        </div>
+
+        <!-- Навигация (Telegram) -->
+        <div class="nav-grid">
+            <a class="nav-btn" href="tg://resolve?domain=Nexik3">📢 Канал <small>читать</small></a>
+            <a class="nav-btn" href="tg://resolve?domain=Nexik_predlozhka_bot">🤖 Бот <small>предложка</small></a>
+            <a class="nav-btn" href="tg://resolve?domain=Nexik3&boost">⭐ Проголосовать</a>
+        </div>
+
+        <!-- Социальные кнопки -->
+        <div class="social-grid">
+            <a href="https://vk.ru" target="_blank" class="social-btn vk"><span class="icon">🅥</span> VK</a>
+            <a href="https://youtube.com" target="_blank" class="social-btn youtube"><span class="icon">▶️</span> YouTube</a>
+            <a href="https://max.ru" target="_blank" class="social-btn max"><span class="icon">🅜</span> МАКС</a>
+            <a href="https://transphoto.org" target="_blank" class="social-btn transphoto"><span class="icon">📷</span> TransPhoto</a>
+        </div>
+
+        <!-- Факты -->
+        <div class="facts-block">
+            <button class="fact-btn" id="factBtn">🚂 Узнать факт о транспорте</button>
+            <div class="fact-display" id="factDisplay">Нажми на кнопку, чтобы узнать что-то новое!</div>
+        </div>
+
+        <!-- Викторина -->
+        <div class="quiz-block">
+            <div class="question" id="quizQuestion">Загрузка вопроса...</div>
+            <div class="answers" id="quizAnswers"></div>
+            <div class="quiz-score" id="quizScore">Правильных ответов: 0</div>
+        </div>
+
+    </div>
+
+    <!-- ===== СЦЕНА С ПОЕЗДОМ (HTML) ===== -->
+    <div class="train-scene">
+        <div class="sky"></div>
+        <div class="sun"></div>
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+        <div class="trees">
+            <div class="tree tall"><div class="crown"></div><div class="trunk"></div></div>
+            <div class="tree"><div class="crown"></div><div class="trunk"></div></div>
+            <div class="tree small"><div class="crown"></div><div class="trunk"></div></div>
+            <div class="tree tall"><div class="crown"></div><div class="trunk"></div></div>
+            <div class="tree"><div class="crown"></div><div class="trunk"></div></div>
+            <div class="tree small"><div class="crown"></div><div class="trunk"></div></div>
+            <div class="tree tall"><div class="crown"></div><div class="trunk"></div></div>
+            <div class="tree"><div class="crown"></div><div class="trunk"></div></div>
+        </div>
+        <div class="sleepers"></div>
+        <div class="rails"></div>
+        <div class="train">
+            <div class="locomotive">
+                <div class="chimney"></div>
+                <div class="smoke"></div>
+                <div class="smoke"></div>
+                <div class="smoke"></div>
+                <div class="windows">
+                    <div class="win"></div>
+                    <div class="win"></div>
+                    <div class="win"></div>
+                </div>
+                <div class="headlight"></div>
+            </div>
+            <div class="carriage">
+                <div class="windows">
+                    <div class="win"></div>
+                    <div class="win"></div>
+                    <div class="win"></div>
+                </div>
+            </div>
+            <div class="carriage">
+                <div class="windows">
+                    <div class="win"></div>
+                    <div class="win"></div>
+                    <div class="win"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== МОДАЛКА ВХОДА ===== -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-box">
+            <h3 id="authTitle">🔐 Вход</h3>
+            <input type="text" id="authUsername" placeholder="Имя пользователя">
+            <input type="password" id="authPassword" placeholder="Пароль">
+            <div class="auth-error" id="authError">Неверные данные</div>
+            <div class="btn-row">
+                <button class="cancel-btn" id="authCancel">Отмена</button>
+                <button class="submit-btn" id="authSubmit">Войти</button>
+            </div>
+            <div class="auth-mode-toggle" id="authToggle">Нет аккаунта? Зарегистрироваться</div>
+        </div>
+    </div>
+
+    <!-- ===== МОДАЛКА ПАРОЛЯ (админ) ===== -->
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-box">
+            <h3>🔐 Введите пароль</h3>
+            <input type="password" id="passwordInput" placeholder="Пароль администратора">
+            <div class="password-error" id="passwordError">Неверный пароль</div>
+            <div class="btn-row">
+                <button class="cancel-btn" id="cancelPassword">Отмена</button>
+                <button class="submit-btn" id="submitPassword">Войти</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
+    <script>
+        (function() {
+            // ============================================================
+            // 1. ДАННЫЕ JSONBin
+            // ============================================================
+            const BIN_ID = '6a887284da38895dfe004250';
+            const API_KEY = '$2a$10$pvXbngo.T2fRwSIOravc8ejXXkyYur2d901NuZdsRk8MUVQqNMotq';
+            const ADMIN_PASSWORD = 'NexikTop0102';
+
+            // ============================================================
+            // 2. СПИСКИ ЛИНИЙ
+            // ============================================================
+            const metroLines = [
+                { name: 'Сокольническая', color: '#e31c24' },
+                { name: 'Замоскворецкая', color: '#3b9e4a' },
+                { name: 'Арбатско-Покровская', color: '#0056a9' },
+                { name: 'Филевская', color: '#00aeef' },
+                { name: 'Кольцевая', color: '#8b5a2b' },
+                { name: 'Калужско-Рижская', color: '#f58220' },
+                { name: 'Таганско-Краснопресненская', color: '#8e1b73' },
+                { name: 'Калининская', color: '#fddb3e' },
+                { name: 'Солнцевская', color: '#f7c600' },
+                { name: 'Серпуховско-Тимирязевская', color: '#8c8c8c' },
+                { name: 'Люблинско-Дмитровская', color: '#b5d334' },
+                { name: 'Большая кольцевая', color: '#0088b0' },
+                { name: 'Некрасовская', color: '#e85ba0' },
+                { name: 'Троицкая', color: '#00a650' },
+                { name: 'Рублёво-Архангельская', color: '#0056a9' },
+                { name: 'Бирюлёвская', color: '#3b9e4a' }
+            ];
+
+            const railDirections = [
+                'Ярославское',
+                'Павелецкое',
+                'Курское',
+                'Рижское',
+                'Савёловское',
+                'Киевское',
+                'Белорусское',
+                'Казанское',
+                'Ленинградское',
+                'Горьковское'
+            ];
+
+            // ============================================================
+            // 3. ВИКТОРИНА (30 вопросов)
+            // ============================================================
+            const quizQuestions = [
+                { question: "В каком году открылся первый в мире метрополитен?", answers: ["1863", "1900", "1921", "1890"], correct: 0 },
+                { question: "Сколько километров составляет Транссибирская магистраль?", answers: ["4288", "6288", "9288", "11288"], correct: 2 },
+                { question: "Какой поезд является самым быстрым в мире?", answers: ["Сапсан", "Маглев", "TGV", "Shinkansen"], correct: 1 },
+                { question: "Сколько человек в день перевозит Московский метрополитен?", answers: ["2 млн", "5 млн", "7 млн", "10 млн"], correct: 2 },
+                { question: "В каком году появился первый троллейбус?", answers: ["1863", "1882", "1900", "1921"], correct: 1 },
+                { question: "Какой вокзал в Москве самый загруженный?", answers: ["Ленинградский", "Казанский", "Ярославский", "Павелецкий"], correct: 1 },
+                { question: "Какая линия метро самая длинная в Москве?", answers: ["Арбатско-Покровская", "Сокольническая", "Большая кольцевая", "Калужско-Рижская"], correct: 2 },
+                { question: "В каком году запустили МЦД?", answers: ["2018", "2019", "2020", "2021"], correct: 1 },
+                { question: "Сколько станций на Кольцевой линии?", answers: ["10", "12", "14", "16"], correct: 1 },
+                { question: "Какой поезд развивает скорость до 400 км/ч?", answers: ["Сапсан", "Ласточка", "Иволга", "Маглев"], correct: 0 },
+                { question: "Какая страна первой запустила метро?", answers: ["Россия", "Англия", "Франция", "США"], correct: 1 },
+                { question: "Сколько всего линий метро в Москве на 2025 год?", answers: ["14", "15", "16", "17"], correct: 2 },
+                { question: "Какая линия метро полностью наземная?", answers: ["Филевская", "Арбатско-Покровская", "Кольцевая", "Большая кольцевая"], correct: 0 },
+                { question: "Сколько вагонов обычно в поезде метро?", answers: ["6", "7", "8", "9"], correct: 2 },
+                { question: "Какой поезд считается самым комфортным в Москве?", answers: ["Москва-2020", "Русич", "Ока", "Иволга"], correct: 0 },
+                { question: "В каком году построили первую линию метро в Москве?", answers: ["1930", "1935", "1940", "1945"], correct: 1 },
+                { question: "Какая станция метро самая глубокая в Москве?", answers: ["Парк Победы", "Комсомольская", "Маяковская", "Арбатская"], correct: 0 },
+                { question: "Сколько минут интервал между поездами в час пик?", answers: ["1", "2", "3", "4"], correct: 1 },
+                { question: "Какой вокзал обслуживает Ярославское направление?", answers: ["Ярославский", "Ленинградский", "Казанский", "Курский"], correct: 0 },
+                { question: "Какого цвета ветка метро называется 'салатовой'?", answers: ["Люблинско-Дмитровская", "Серпуховско-Тимирязевская", "Калужско-Рижская", "Некрасовская"], correct: 0 },
+                { question: "Сколько всего вагонов в составах 'Москва-2020'?", answers: ["8", "7", "6", "9"], correct: 0 },
+                { question: "Какая станция метро самая красивая в Москве?", answers: ["Комсомольская", "Маяковская", "Новослободская", "Парк Победы"], correct: 0 },
+                { question: "В каком году открыли Большую кольцевую линию?", answers: ["2021", "2022", "2023", "2024"], correct: 2 },
+                { question: "Сколько станций на Сокольнической линии?", answers: ["22", "24", "26", "28"], correct: 2 },
+                { question: "Какой транспорт в Москве самый экологичный?", answers: ["Метро", "Трамвай", "Троллейбус", "Электробус"], correct: 3 },
+                { question: "Сколько километров составляет МЦД-3?", answers: ["85", "90", "95", "100"], correct: 1 },
+                { question: "Какой вокзал считается самым старым в Москве?", answers: ["Ленинградский", "Ярославский", "Казанский", "Павелецкий"], correct: 0 },
+                { question: "Сколько линий метро будет в Москве к 2030 году?", answers: ["18", "20", "22", "24"], correct: 1 },
+                { question: "Какая станция метро самая короткая?", answers: ["Воробьёвы горы", "Кунцевская", "Парк Победы", "Строгино"], correct: 0 },
+                { question: "Сколько поездов метро выходит на линию в час пик?", answers: ["100", "150", "200", "250"], correct: 2 }
+            ];
+
+            // ============================================================
+            // 4. ФАКТЫ (50 фактов)
+            // ============================================================
+            const facts = [
+                "Первый в мире метрополитен открылся в Лондоне в 1863 году.",
+                "Самая длинная железнодорожная линия в мире — Транссибирская магистраль (9288 км).",
+                "Самый быстрый поезд — японский маглев, разгоняется до 603 км/ч.",
+                "В Москве ежедневно метро перевозит около 7 миллионов человек.",
+                "Первый троллейбус появился в Германии в 1882 году.",
+                "Электричка ЭД4М развивает скорость до 120 км/ч.",
+                "Самый загруженный вокзал в России — Казанский вокзал в Москве.",
+                "В Японии есть поезда, которые ходят с точностью до секунды.",
+                "Дубайский метрополитен — полностью автоматизированный, без машинистов.",
+                "В 1890 году в Лондоне открылась первая электрифицированная линия метро.",
+                "Поезд Сапсан развивает скорость до 250 км/ч.",
+                "В Москве самый короткий интервал между поездами — 90 секунд.",
+                "Метро в Москве открывается в 5:30 утра.",
+                "Станция 'Комсомольская' признана самой красивой станцией метро.",
+                "Поезд 'Ласточка' используется на МЦД и пригородных маршрутах.",
+                "Первая линия метро в Москве имела всего 13 станций.",
+                "В метро Москвы работает около 10 000 поездов в день.",
+                "Станция 'Парк Победы' находится на глубине 73 метра.",
+                "МЦД-1 — это первый диаметр, открытый в 2019 году.",
+                "Самый длинный перегон в метро Москвы — между 'Крылатским' и 'Строгино'.",
+                "В метро Петербурга поезда ездят по левому пути.",
+                "В Лондоне метро называют 'Tube' (труба).",
+                "Станция 'Воробьёвы горы' находится на мосту через Москву-реку.",
+                "В московском метро более 200 станций.",
+                "В день через метро Москвы проходит более 10 000 поездов.",
+                "Станция 'Маяковская' — первая станция с колоннами из нержавеющей стали.",
+                "В Токио метро перевозит более 8 миллионов человек в день.",
+                "Первый поезд метро в Москве состоял из 4 вагонов.",
+                "Самый короткий маршрут метро в мире — в Кейптауне (около 2 км).",
+                "Метро Нью-Йорка работает круглосуточно.",
+                "Станция 'Новослободская' украшена витражами с цветами.",
+                "В метро Москвы ежедневно работает более 500 эскалаторов.",
+                "Самый длинный эскалатор в Москве — на станции 'Парк Победы'.",
+                "В 2023 году московское метро перевезло более 2 миллиардов пассажиров.",
+                "Станция 'Площадь Революции' известна своими бронзовыми скульптурами.",
+                "На МЦД используются поезда 'Иволга' российского производства.",
+                "Самый старый вагон метро в Москве — 1970-х годов.",
+                "В метро Парижа есть станция 'Лувр', которая находится прямо под музеем.",
+                "Станция 'Киевская' украшена мозаикой с украинскими мотивами.",
+                "В Москве строят новые линии метро со скоростью 5-7 станций в год.",
+                "Поезд 'Сапсан' соединяет Москву с Петербургом за 4 часа.",
+                "Метро в Москве занимает 3-е место в мире по загруженности.",
+                "Станция 'Сокольники' — одна из старейших в московском метро.",
+                "В метро Лондона нет кондиционеров в старых поездах.",
+                "На МЦД можно пересаживаться на метро и МЦК по единому билету.",
+                "Станция 'Кропоткинская' выполнена в стиле конструктивизма.",
+                "Метро Москвы украшено мозаикой, скульптурами и витражами.",
+                "В метро Санкт-Петербурга самые глубокие станции в России.",
+                "Поезд 'Аэроэкспресс' возит пассажиров от вокзалов к аэропортам.",
+                "Станция 'Белорусская' украшена барельефами на тему войны 1812 года."
+            ];
+
+            // ============================================================
+            // 5. ПЕРЕМЕННЫЕ
+            // ============================================================
+            let lines = [];
+            let isAdmin = false;
+            let isLoggedIn = false;
+            let currentUser = null;
+            let alarmPlayed = false;
+            let audioCtx = null;
+            let quizScore = 0;
+            let currentQuestionIndex = 0;
+            let isAuthModeLogin = true;
+
+            // ============================================================
+            // 6. DOM-элементы
+            // ============================================================
+            const statusList = document.getElementById('statusList');
+            const alertBox = document.getElementById('alertBox');
+            const problemLinesSpan = document.getElementById('problemLines');
+            const adminPanel = document.getElementById('adminPanel');
+            const adminControls = document.getElementById('adminControls');
+            const gearBtn = document.getElementById('gearBtn');
+            const themeBtn = document.getElementById('themeBtn');
+            const loginBtn = document.getElementById('loginBtn');
+            const userGreeting = document.getElementById('userGreeting');
+            const passwordOverlay = document.getElementById('passwordOverlay');
+            const passwordInput = document.getElementById('passwordInput');
+            const passwordError = document.getElementById('passwordError');
+            const submitBtn = document.getElementById('submitPassword');
+            const cancelBtn = document.getElementById('cancelPassword');
+            const factBtn = document.getElementById('factBtn');
+            const factDisplay = document.getElementById('factDisplay');
+            const quizQuestion = document.getElementById('quizQuestion');
+            const quizAnswers = document.getElementById('quizAnswers');
+            const quizScoreEl = document.getElementById('quizScore');
+            const updateBanner = document.getElementById('updateBanner');
+            const closeBanner = document.getElementById('closeBanner');
+            const authOverlay = document.getElementById('authOverlay');
+            const authUsername = document.getElementById('authUsername');
+            const authPassword = document.getElementById('authPassword');
+            const authError = document.getElementById('authError');
+            const authSubmit = document.getElementById('authSubmit');
+            const authCancel = document.getElementById('authCancel');
+            const authToggle = document.getElementById('authToggle');
+            const authTitle = document.getElementById('authTitle');
+
+            // ============================================================
+            // 7. ЗВУК
+            // ============================================================
+            function playAlarm() {
+                if (!audioCtx) {
+                    audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                }
+                const now = audioCtx.currentTime;
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                gain.gain.value = 0.15;
+
+                osc1.type = 'square';
+                osc1.frequency.setValueAtTime(880, now);
+                osc1.frequency.setValueAtTime(660, now + 0.2);
+                osc1.frequency.setValueAtTime(880, now + 0.4);
+                osc1.frequency.setValueAtTime(660, now + 0.6);
+                osc1.frequency.setValueAtTime(880, now + 0.8);
+
+                osc2.type = 'square';
+                osc2.frequency.setValueAtTime(660, now);
+                osc2.frequency.setValueAtTime(880, now + 0.2);
+                osc2.frequency.setValueAtTime(660, now + 0.4);
+                osc2.frequency.setValueAtTime(880, now + 0.6);
+                osc2.frequency.setValueAtTime(660, now + 0.8);
+
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc1.start(now);
+                osc1.stop(now + 1.0);
+                osc2.start(now);
+                osc2.stop(now + 1.0);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+            }
+
+            // ============================================================
+            // 8. ТЕМА
+            // ============================================================
+            function applyTheme(isDark) {
+                if (isDark) {
+                    document.body.classList.add('dark');
+                    themeBtn.textContent = '☀️';
+                } else {
+                    document.body.classList.remove('dark');
+                    themeBtn.textContent = '🌙';
+                }
+                localStorage.setItem('nexik-theme', isDark ? 'dark' : 'light');
+            }
+
+            function autoTheme() {
+                const hour = new Date().getHours();
+                applyTheme(hour < 6 || hour >= 20);
+            }
+
+            themeBtn.addEventListener('click', function() {
+                applyTheme(!document.body.classList.contains('dark'));
+            });
+
+            // ============================================================
+            // 9. БАННЕР ОБНОВЫ (8 часов)
+            // ============================================================
+            function checkBanner() {
+                const bannerShown = localStorage.getItem('banner_shown_v2_2');
+                const now = Date.now();
+
+                if (!bannerShown) {
+                    updateBanner.classList.add('show');
+                    localStorage.setItem('banner_shown_v2_2', now);
+                } else {
+                    const timePassed = (now - parseInt(bannerShown)) / 1000 / 60 / 60;
+                    if (timePassed < 8) {
+                        updateBanner.classList.add('show');
+                    } else {
+                        updateBanner.classList.remove('show');
+                    }
+                }
+            }
+
+            closeBanner.addEventListener('click', function() {
+                updateBanner.classList.remove('show');
+            });
+
+            // ============================================================
+            // 10. АВТОРИЗАЦИЯ
+            // ============================================================
+            function checkAuth() {
+                const user = localStorage.getItem('nexik_user');
+                if (user) {
+                    isLoggedIn = true;
+                    currentUser = user;
+                    loginBtn.textContent = '👤';
+                    loginBtn.classList.add('logged-in');
+                    userGreeting.textContent = `Привет, ${user}!`;
+                    userGreeting.classList.add('show');
+                } else {
+                    isLoggedIn = false;
+                    currentUser = null;
+                    loginBtn.textContent = '👤';
+                    loginBtn.classList.remove('logged-in');
+                    userGreeting.classList.remove('show');
+                }
+            }
+
+            function toggleAuthMode() {
+                isAuthModeLogin = !isAuthModeLogin;
+                authTitle.textContent = isAuthModeLogin ? '🔐 Вход' : '📝 Регистрация';
+                authSubmit.textContent = isAuthModeLogin ? 'Войти' : 'Зарегистрироваться';
+                authToggle.textContent = isAuthModeLogin ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти';
+                authError.classList.remove('show');
+            }
+
+            function handleAuth() {
+                const username = authUsername.value.trim();
+                const password = authPassword.value.trim();
+
+                if (!username || !password) {
+                    authError.textContent = 'Заполните все поля';
+                    authError.classList.add('show');
+                    return;
+                }
+
+                if (isAuthModeLogin) {
+                    const storedPassword = localStorage.getItem(`nexik_pass_${username}`);
+                    if (storedPassword === password) {
+                        localStorage.setItem('nexik_user', username);
+                        checkAuth();
+                        authOverlay.classList.remove('active');
+                        authError.classList.remove('show');
+                    } else {
+                        authError.textContent = 'Неверное имя или пароль';
+                        authError.classList.add('show');
+                    }
+                } else {
+                    const storedPassword = localStorage.getItem(`nexik_pass_${username}`);
+                    if (storedPassword) {
+                        authError.textContent = 'Пользователь уже существует';
+                        authError.classList.add('show');
+                        return;
+                    }
+                    localStorage.setItem(`nexik_pass_${username}`, password);
+                    localStorage.setItem('nexik_user', username);
+                    checkAuth();
+                    authOverlay.classList.remove('active');
+                    authError.classList.remove('show');
+                }
+            }
+
+            loginBtn.addEventListener('click', function() {
+                authOverlay.classList.add('active');
+                authUsername.value = '';
+                authPassword.value = '';
+                authError.classList.remove('show');
+                authUsername.focus();
+            });
+
+            authCancel.addEventListener('click', function() {
+                authOverlay.classList.remove('active');
+            });
+
+            authSubmit.addEventListener('click', handleAuth);
+
+            authToggle.addEventListener('click', toggleAuthMode);
+
+            authOverlay.addEventListener('click', function(e) {
+                if (e.target === authOverlay) {
+                    authOverlay.classList.remove('active');
+                }
+            });
+
+            // ============================================================
+            // 11. ОТРИСОВКА СТАТУСОВ
+            // ============================================================
+            function renderStatuses() {
+                statusList.innerHTML = '';
+                let problemNames = [];
+
+                // Метро
+                metroLines.forEach((line, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'status-item';
+                    const dot = document.createElement('span');
+                    const status = lines[index]?.status || 'ok';
+                    dot.className = `status-dot metro ${status}`;
+                    dot.style.backgroundColor = line.color;
+                    dot.style.borderColor = line.color;
+                    dot.style.boxShadow = `0 0 8px ${line.color}66`;
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = line.name;
+                    const textSpan = document.createElement('span');
+                    const label = status === 'ok' ? 'Штатно' : 'Перебои';
+                    textSpan.className = `status-text ${status}`;
+                    textSpan.textContent = label;
+                    item.appendChild(dot);
+                    item.appendChild(nameSpan);
+                    item.appendChild(textSpan);
+                    statusList.appendChild(item);
+
+                    if (status === 'problem') {
+                        problemNames.push(line.name);
+                    }
+                });
+
+                // 17-я линия
+                const item17 = document.createElement('div');
+                item17.className = 'status-item';
+                const dot17 = document.createElement('span');
+                dot17.className = 'status-dot ok';
+                dot17.style.background = '#ccc';
+                dot17.style.boxShadow = 'none';
+                const name17 = document.createElement('span');
+                name17.textContent = '🚧 17-я линия';
+                const text17 = document.createElement('span');
+                text17.className = 'status-text ok';
+                text17.textContent = 'Ещё не открыта';
+                item17.appendChild(dot17);
+                item17.appendChild(name17);
+                item17.appendChild(text17);
+                statusList.appendChild(item17);
+
+                // Ж/д направления
+                railDirections.forEach(dir => {
+                    const item = document.createElement('div');
+                    item.className = 'status-item';
+                    const dot = document.createElement('span');
+                    const status = lines[metroLines.length + railDirections.indexOf(dir)]?.status || 'ok';
+                    dot.className = `status-dot ${status}`;
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = dir;
+                    const textSpan = document.createElement('span');
+                    const label = status === 'ok' ? 'Штатно' : 'Перебои';
+                    textSpan.className = `status-text ${status}`;
+                    textSpan.textContent = label;
+                    item.appendChild(dot);
+                    item.appendChild(nameSpan);
+                    item.appendChild(textSpan);
+                    statusList.appendChild(item);
+
+                    if (status === 'problem') {
+                        problemNames.push(dir);
+                    }
+                });
+
+                if (problemNames.length > 0) {
+                    alertBox.classList.add('show');
+                    problemLinesSpan.textContent = problemNames.join(', ');
+                    if (!alarmPlayed) {
+                        playAlarm();
+                        alarmPlayed = true;
+                    }
+                } else {
+                    alertBox.classList.remove('show');
+                    alarmPlayed = false;
+                }
+
+                if (isAdmin) {
+                    renderAdminPanel();
+                }
+            }
+
+            // ============================================================
+            // 12. АДМИН-ПАНЕЛЬ
+            // ============================================================
+            function renderAdminPanel() {
+                adminControls.innerHTML = '';
+                const allLines = [];
+                metroLines.forEach((line, index) => {
+                    allLines.push({ name: line.name, index: index });
+                });
+                railDirections.forEach((dir, index) => {
+                    allLines.push({ name: dir, index: metroLines.length + index });
+                });
+
+                allLines.forEach((item) => {
+                    const row = document.createElement('div');
+                    row.className = 'admin-row';
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'line-name';
+                    nameSpan.textContent = item.name;
+
+                    const btns = document.createElement('div');
+                    btns.className = 'status-btns';
+
+                    const okBtn = document.createElement('button');
+                    okBtn.textContent = 'Штатно';
+                    const currentStatus = lines[item.index]?.status || 'ok';
+                    okBtn.className = `ok-btn ${currentStatus === 'ok' ? 'active' : ''}`;
+                    okBtn.addEventListener('click', () => {
+                        lines[item.index] = { status: 'ok' };
+                        saveToCloud();
+                    });
+
+                    const problemBtn = document.createElement('button');
+                    problemBtn.textContent = 'Перебои';
+                    problemBtn.className = `problem-btn ${currentStatus === 'problem' ? 'active' : ''}`;
+                    problemBtn.addEventListener('click', () => {
+                        lines[item.index] = { status: 'problem' };
+                        saveToCloud();
+                    });
+
+                    btns.appendChild(okBtn);
+                    btns.appendChild(problemBtn);
+                    row.appendChild(nameSpan);
+                    row.appendChild(btns);
+                    adminControls.appendChild(row);
+                });
+            }
+
+            // ============================================================
+            // 13. ОБЛАКО (JSONBin)
+            // ============================================================
+            function loadFromCloud() {
+                const url = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
+                fetch(url, {
+                        headers: { 'X-Master-Key': API_KEY }
+                    })
+                    .then(res => {
+                        if (!res.ok) throw new Error('Network error');
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data.record && data.record.lines) {
+                            lines = data.record.lines;
+                        } else {
+                            lines = [];
+                            saveToCloud();
+                        }
+                        renderStatuses();
+                    })
+                    .catch(err => {
+                        console.warn('Cloud unavailable, using localStorage', err);
+                        const stored = localStorage.getItem('nexik_lines');
+                        if (stored) {
+                            try { lines = JSON.parse(stored); } catch (e) { lines = []; }
+                        } else {
+                            lines = [];
+                        }
+                        renderStatuses();
+                    });
+            }
+
+            function saveToCloud() {
+                const data = { lines: lines };
+                const url = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+                fetch(url, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': API_KEY
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(res => {
+                        if (!res.ok) throw new Error('Save failed');
+                        localStorage.setItem('nexik_lines', JSON.stringify(lines));
+                        renderStatuses();
+                    })
+                    .catch(err => {
+                        console.warn('Save to cloud failed, saving locally', err);
+                        localStorage.setItem('nexik_lines', JSON.stringify(lines));
+                        renderStatuses();
+                    });
+            }
+
+            // ============================================================
+            // 14. ФАКТЫ
+            // ============================================================
+            function showRandomFact() {
+                const randomIndex = Math.floor(Math.random() * facts.length);
+                factDisplay.textContent = facts[randomIndex];
+                factDisplay.style.opacity = '0';
+                setTimeout(() => factDisplay.style.opacity = '1', 50);
+            }
+            factBtn.addEventListener('click', showRandomFact);
+
+            // ============================================================
+            // 15. ВИКТОРИНА
+            // ============================================================
+            function loadQuizQuestion() {
+                if (currentQuestionIndex >= quizQuestions.length) {
+                    quizQuestion.textContent = '🎉 Ты ответил на все вопросы!';
+                    quizAnswers.innerHTML = '';
+                    return;
+                }
+
+                const q = quizQuestions[currentQuestionIndex];
+                quizQuestion.textContent = q.question;
+                quizAnswers.innerHTML = '';
+
+                q.answers.forEach((answer, index) => {
+                    const btn = document.createElement('button');
+                    btn.textContent = answer;
+                    btn.dataset.index = index;
+                    btn.addEventListener('click', () => handleQuizAnswer(btn, index, q.correct));
+                    quizAnswers.appendChild(btn);
+                });
+            }
+
+            function handleQuizAnswer(btn, selected, correct) {
+                const buttons = quizAnswers.querySelectorAll('button');
+                buttons.forEach(b => b.disabled = true);
+
+                if (selected === correct) {
+                    btn.classList.add('correct');
+                    quizScore++;
+                } else {
+                    btn.classList.add('wrong');
+                    buttons[correct].classList.add('correct');
+                }
+
+                quizScoreEl.textContent = `Правильных ответов: ${quizScore}`;
+                currentQuestionIndex++;
+
+                setTimeout(() => {
+                    loadQuizQuestion();
+                }, 1500);
+            }
+
+            // ============================================================
+            // 16. ПАРОЛЬ (админ)
+            // ============================================================
+            function showPasswordOverlay() {
+                passwordOverlay.classList.add('active');
+                passwordInput.value = '';
+                passwordError.classList.remove('show');
+                passwordInput.focus();
+            }
+
+            function hidePasswordOverlay() {
+                passwordOverlay.classList.remove('active');
+            }
+
+            function tryLogin() {
+                const pass = passwordInput.value.trim();
+                if (pass === ADMIN_PASSWORD) {
+                    isAdmin = true;
+                    adminPanel.classList.add('visible');
+                    renderAdminPanel();
+                    hidePasswordOverlay();
+                } else {
+                    passwordError.classList.add('show');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            }
+
+            gearBtn.addEventListener('click', showPasswordOverlay);
+            cancelBtn.addEventListener('click', hidePasswordOverlay);
+            submitBtn.addEventListener('click', tryLogin);
+            passwordInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') tryLogin();
+            });
+            passwordOverlay.addEventListener('click', (e) => {
+                if (e.target === passwordOverlay) hidePasswordOverlay();
+            });
+
+            // ============================================================
+            // 17. ПРАЗДНИКИ
+            // ============================================================
+            function applyHolidayTheme() {
+                const now = new Date();
+                const month = now.getMonth() + 1;
+                const day = now.getDate();
+
+                document.body.classList.remove('holiday-newyear', 'holiday-maslenitsa', 'holiday-victory', 'holiday-halloween', 'holiday-september', 'holiday-railway');
+
+                if ((month === 12 && day >= 31) || (month === 1 && day <= 2)) {
+                    document.body.classList.add('holiday-newyear');
+                }
+                if ((month === 2 && day > 20) || (month === 3 && day < 10)) {
+                    document.body.classList.add('holiday-maslenitsa');
+                }
+                if (month === 5 && day === 9) {
+                    document.body.classList.add('holiday-victory');
+                }
+                if (month === 10 && day === 31) {
+                    document.body.classList.add('holiday-halloween');
+                }
+                if (month === 9 && day === 1) {
+                    document.body.classList.add('holiday-september');
+                }
+                if (month === 8 && day === 7) {
+                    document.body.classList.add('holiday-railway');
+                }
+            }
+
+            // ============================================================
+            // 18. ЗАПУСК
+            // ============================================================
+            autoTheme();
+            checkAuth();
+            checkBanner();
+            applyHolidayTheme();
+            loadFromCloud();
+            loadQuizQuestion();
+            setTimeout(showRandomFact, 500);
+
+            setInterval(applyHolidayTheme, 3600000);
+
+        })();
+    </script>
+
+</body>
+</html>
