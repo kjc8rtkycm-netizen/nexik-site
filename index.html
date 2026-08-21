@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexik | Транспортные новости</title>
+</head>
+<body style="margin: 0; background: #121212; padding: 12px; font-family: system-ui, -apple-system, sans-serif;">
+
+    <div style="max-width: 600px; margin: 0 auto; background: #1a1a1a; border-radius: 16px; padding: 16px; box-sizing: border-box;">
+        
+        <!-- Шапка -->
+        <div style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #2a2a2a; padding-bottom: 14px; margin-bottom: 16px;">
+            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #2b5278, #0088cc); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; font-weight: bold;">N</div>
+            <div>
+                <div style="color: white; font-weight: bold; font-size: 18px;">Nexik</div>
+                <div style="color: #8e8e93; font-size: 13px;">Транспортные новости</div>
+            </div>
+        </div>
+
+        <!-- Лента постов -->
+        <div id="posts-container" style="max-height: 500px; overflow-y: auto; padding-right: 4px;">
+            <div id="loading-text" style="color: #8e8e93; text-align: center; padding: 40px 0;">⏳ Загрузка свежих постов из Telegram...</div>
+        </div>
+
+        <!-- Кнопка -->
+        <div style="margin-top: 16px; text-align: center;">
+            <a href="https://t.me" target="_blank" style="display: block; background: #0088cc; color: white; padding: 14px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 15px;">📱 Подписаться в Telegram</a>
+        </div>
+    </div>
+
+    <script>
+    async function fetchTelegramPosts() {
+        const channelName = 'Nexik3';
+        // Используем открытый декодер, чтобы обойти блокировку t.me в России
+        const proxyUrl = 'https://allorigins.win';
+        const targetUrl = encodeURIComponent(`https://t.me{channelName}`);
+        
+        try {
+            const response = await fetch(proxyUrl + targetUrl);
+            const data = await response.json();
+            
+            // Создаем виртуальную страницу для поиска постов
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data.contents, 'text/html');
+            const tgPosts = doc.querySelectorAll('.tgme_widget_message_wrap');
+            const container = document.getElementById('posts-container');
+            
+            if (tgPosts.length > 0) {
+                document.getElementById('loading-text').remove();
+                
+                // Берем последние 10 постов и выводим их в обратном порядке
+                Array.from(tgPosts).slice(-10).reverse().forEach(post => {
+                    const textElement = post.querySelector('.tgme_widget_message_text');
+                    const photoElement = post.querySelector('.tgme_widget_message_photo_wrap');
+                    const timeElement = post.querySelector('.tgme_widget_message_meta time');
+                    
+                    if (!textElement && !photoElement) return;
+
+                    const postDiv = document.createElement('div');
+                    postDiv.style.background = '#2c2c2e';
+                    postDiv.style.borderRadius = '12px';
+                    postDiv.style.padding = '14px';
+                    postDiv.style.marginBottom = '12px';
+                    postDiv.style.opacity = '0';
+                    postDiv.style.transform = 'translateY(10px)';
+                    postDiv.style.transition = 'all 0.4s ease';
+
+                    // Добавляем время
+                    if (timeElement) {
+                        const timeDiv = document.createElement('div');
+                        timeDiv.style.color = '#8e8e93';
+                        timeDiv.style.fontSize = '12px';
+                        timeDiv.style.marginBottom = '8px';
+                        timeDiv.style.innerText = timeElement.innerText;
+                        postDiv.appendChild(timeDiv);
+                    }
+
+                    // Добавляем картинку, если она есть в посте
+                    if (photoElement) {
+                        const bgImg = photoElement.style.backgroundImage;
+                        const imgUrl = bgImg.slice(4, -1).replace(/"/g, "");
+                        const img = document.createElement('img');
+                        img.src = imgUrl;
+                        img.style.width = '100%';
+                        img.style.borderRadius = '8px';
+                        img.style.marginBottom = '10px';
+                        postDiv.appendChild(img);
+                    }
+
+                    // Добавляем текст со всеми смайликами
+                    if (textElement) {
+                        const textDiv = document.createElement('div');
+                        textDiv.style.color = '#e5e5ea';
+                        textDiv.style.fontSize = '15px';
+                        textDiv.style.lineHeight = '1.5';
+                        textDiv.innerHTML = textElement.innerHTML;
+                        postDiv.appendChild(textDiv);
+                    }
+
+                    container.appendChild(postDiv);
+                    
+                    // Эффект плавного появления постов один за другим
+                    setTimeout(() => {
+                        postDiv.style.opacity = '1';
+                        postDiv.style.transform = 'translateY(0)';
+                    }, 50);
+                });
+            } else {
+                showError();
+            }
+        } catch (e) {
+            showError();
+        }
+    }
+
+    function showError() {
+        document.getElementById('loading-text').innerHTML = '📢 Лента обновляется в Telegram. Нажмите кнопку ниже, чтобы увидеть все посты!';
+    }
+
+    fetchTelegramPosts();
+    </script>
+</body>
+</html>
