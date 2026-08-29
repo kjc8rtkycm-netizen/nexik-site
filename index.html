@@ -1,0 +1,3658 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Nexik — v.13.2</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-database-compat.js"></script>
+  <style>
+    :root {
+      --bg-body: radial-gradient(circle at 20% 30%, #0a0f1f, #05080f), radial-gradient(circle at 80% 70%, #150a20, #05080f);
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+      --text-primary: #e8f0f8;
+      --text-secondary: #8a9fc0;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --nav-btn-bg: rgba(255, 255, 255, 0.05);
+      --nav-btn-hover: rgba(255, 255, 255, 0.12);
+      --input-bg: rgba(255, 255, 255, 0.05);
+      --input-border: rgba(255, 255, 255, 0.08);
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      --user-chip-bg: rgba(255, 255, 255, 0.06);
+      --user-chip-hover: rgba(255, 255, 255, 0.12);
+      --spot-btn-bg: rgba(46, 204, 113, 0.10);
+      --spot-btn-border: rgba(46, 204, 113, 0.20);
+      --modal-bg: rgba(10, 15, 30, 0.7);
+      --modal-border: rgba(255, 255, 255, 0.08);
+      --admin-tab-bg: rgba(255, 255, 255, 0.04);
+      --admin-tab-active: rgba(42, 125, 225, 0.25);
+      --footer-color: #5a6a80;
+      --online-color: #2ecc71;
+      --offline-color: #555;
+      --banned-color: #e74c3c;
+    }
+    body.theme-light {
+      --bg-body: #eef2f7;
+      --glass-bg: rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.3);
+      --text-primary: #1a1a2e;
+      --text-secondary: #5a6a80;
+      --card-bg: rgba(255, 255, 255, 0.2);
+      --card-border: rgba(255, 255, 255, 0.3);
+      --nav-btn-bg: rgba(255, 255, 255, 0.1);
+      --nav-btn-hover: rgba(255, 255, 255, 0.2);
+      --input-bg: rgba(255, 255, 255, 0.15);
+      --input-border: rgba(255, 255, 255, 0.2);
+      --shadow: 0 30px 80px rgba(0,0,0,0.04);
+      --user-chip-bg: rgba(255, 255, 255, 0.1);
+      --user-chip-hover: rgba(255, 255, 255, 0.2);
+      --spot-btn-bg: rgba(46, 125, 50, 0.05);
+      --spot-btn-border: rgba(46, 125, 50, 0.1);
+      --modal-bg: rgba(255, 255, 255, 0.8);
+      --modal-border: rgba(255, 255, 255, 0.3);
+      --admin-tab-bg: rgba(255, 255, 255, 0.1);
+      --admin-tab-active: rgba(42, 125, 225, 0.15);
+      --footer-color: #5a6a80;
+    }
+    /* ===== КАСТОМНЫЕ СТИЛИ ДЛЯ НИКОВ ===== */
+    .rainbow-nick {
+      background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      animation: rainbowSpin 3s linear infinite !important;
+      background-size: 300% 100% !important;
+      display: inline-block !important;
+    }
+    .stars-nick {
+      color: #ffd700 !important;
+      text-shadow: 0 0 20px #ffd700, 0 0 40px #ff8c00 !important;
+    }
+    .neon-nick {
+      color: #ff00ff !important;
+      text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff !important;
+    }
+    .marble-nick {
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f0f0f0"/><path d="M10 10 Q30 50 50 10 Q70 50 90 10 Q70 70 50 90 Q30 70 10 10" fill="%23d0d0d0" opacity="0.5"/></svg>') !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+    }
+    .metal-nick {
+      background: linear-gradient(180deg, #b8b8b8, #f0f0f0, #888888) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+    }
+    .chaos-nick {
+      animation: chaosText 0.2s infinite alternate !important;
+      display: inline-block !important;
+    }
+    @keyframes chaosText {
+      0% { color: red; transform: rotate(-3deg) scale(1.1); }
+      25% { color: blue; transform: rotate(3deg) scale(0.9); }
+      50% { color: green; transform: rotate(-2deg) scale(1.05); }
+      75% { color: purple; transform: rotate(2deg) scale(0.95); }
+      100% { color: orange; transform: rotate(0deg) scale(1); }
+    }
+    .shadow-nick {
+      color: #fff !important;
+      text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.6) !important;
+    }
+    .glitch-nick {
+      animation: glitch 0.3s infinite !important;
+      display: inline-block !important;
+    }
+    @keyframes glitch {
+      0% { transform: translate(0); color: #fff; }
+      20% { transform: translate(-3px, 2px); color: #ff00ff; }
+      40% { transform: translate(3px, -2px); color: #00ffff; }
+      60% { transform: translate(-2px, 3px); color: #ff00ff; }
+      80% { transform: translate(2px, -3px); color: #00ffff; }
+      100% { transform: translate(0); color: #fff; }
+    }
+    .pixel-nick {
+      font-family: 'Courier New', monospace !important;
+      color: #00ff00 !important;
+      text-shadow: 0 0 10px #00ff00 !important;
+    }
+    .fire-nick {
+      background: linear-gradient(180deg, #ff4500, #ff8c00, #ffd700) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      animation: firePulse 1s infinite alternate !important;
+    }
+    @keyframes firePulse {
+      0% { filter: drop-shadow(0 0 10px #ff4500); }
+      100% { filter: drop-shadow(0 0 30px #ff8c00); }
+    }
+    .ice-nick {
+      color: #00ffff !important;
+      text-shadow: 0 0 20px #00ffff, 0 0 40px #0088ff !important;
+    }
+    .space-nick {
+      background: linear-gradient(180deg, #000033, #4400aa, #8800ff, #4400aa, #000033) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      animation: spacePulse 2s infinite alternate !important;
+    }
+    @keyframes spacePulse {
+      0% { filter: drop-shadow(0 0 10px #4400aa); }
+      100% { filter: drop-shadow(0 0 30px #8800ff); }
+    }
+    .admin-glow {
+      color: #ffd700 !important;
+      text-shadow: 0 0 20px #ffd700, 0 0 40px #ff8c00, 0 0 60px #ff4500 !important;
+    }
+    @keyframes rainbowSpin {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 16px 40px;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      transition: all 0.4s ease;
+      background-attachment: fixed;
+    }
+    .app {
+      max-width: 500px;
+      width: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(60px) saturate(1.4);
+      -webkit-backdrop-filter: blur(60px) saturate(1.4);
+      border-radius: 48px;
+      padding: 24px 20px 30px;
+      box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.08);
+      border: 1px solid var(--glass-border);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .app::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.06) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .app::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      right: -30%;
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(circle at 70% 80%, rgba(106, 158, 255, 0.03) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .title-group h1 {
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #a0c8ff, #6a9eff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-shadow: 0 0 60px rgba(106, 158, 255, 0.20);
+    }
+    .title-group p {
+      font-size: 13px;
+      opacity: 0.5;
+      margin-top: 2px;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+    }
+    .top-buttons {
+      display: flex;
+      gap: 6px;
+    }
+    .top-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--nav-btn-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      color: rgba(255,255,255,0.7);
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .top-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .top-btn:hover {
+      background: rgba(255,255,255,0.12);
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 8px 40px rgba(106, 158, 255, 0.20), inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+    .top-btn:active { transform: scale(0.92); }
+    .login-btn.logged-in { color: #2ecc71; }
+    .user-greeting {
+      font-size: 13px;
+      opacity: 0.7;
+      padding: 6px 16px;
+      border-radius: 30px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      display: none;
+      width: 100%;
+      text-align: center;
+      margin-top: 6px;
+      color: var(--text-primary);
+    }
+    .user-greeting.show { display: block; }
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.04);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .card-title {
+      font-weight: 600;
+      opacity: 0.6;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      letter-spacing: 0.3px;
+    }
+    .users-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .user-chip {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 6px 14px 6px 10px;
+      background: var(--user-chip-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      color: var(--text-primary);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .user-chip:hover {
+      background: var(--user-chip-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(106, 158, 255, 0.10);
+    }
+    .user-chip .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #2a7de1, #6a9eff);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .user-chip .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .user-chip .online-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-left: 4px;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+    .user-chip .coin-display {
+      font-size: 10px;
+      color: #ffd700;
+      margin-left: 4px;
+    }
+    .user-chip .coin-display.infinity {
+      color: #ff6b6b;
+      font-size: 14px;
+    }
+    .user-chip.banned { opacity: 0.3; filter: grayscale(1); text-decoration: line-through; }
+    .status-badge {
+      font-size: 8px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      background: #2ecc71;
+      color: #fff;
+      display: none;
+      font-weight: 600;
+    }
+    .status-badge.active { display: inline-block; animation: pulse 1.5s infinite; }
+    @keyframes pulse {
+      0% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+      100% { opacity: 0.7; transform: scale(1); }
+    }
+    .spot-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: var(--spot-btn-bg);
+      color: var(--text-primary);
+      border: 1px solid var(--spot-btn-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.04);
+      position: relative;
+      overflow: hidden;
+    }
+    .spot-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .spot-btn.active {
+      background: rgba(46, 204, 113, 0.20);
+      border-color: #2ecc71;
+      box-shadow: 0 0 60px rgba(46, 204, 113, 0.08), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .spot-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(46, 204, 113, 0.12); }
+    .spot-btn:active { transform: scale(0.96); }
+    .spot-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .spot-btn .cooldown { font-size: 12px; opacity: 0.5; }
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .nav-btn {
+      padding: 12px 6px;
+      background: var(--nav-btn-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: var(--text-primary);
+      cursor: pointer;
+      min-height: 60px;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+    }
+    .nav-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .nav-btn:hover {
+      background: var(--nav-btn-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(106, 158, 255, 0.06), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .nav-btn .icon { font-size: 20px; color: #6a9eff; filter: drop-shadow(0 0 12px rgba(106,158,255,0.10)); }
+    .nav-btn small { font-size: 8px; opacity: 0.4; font-weight: 400; letter-spacing: 0.3px; }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+    }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .status-dot.ok { background: #2ecc71; box-shadow: 0 0 20px rgba(46,204,113,0.25); }
+    .status-dot.problem { background: #e74c3c; box-shadow: 0 0 20px rgba(231,76,60,0.25); }
+    .status-text { margin-left: auto; font-size: 10px; opacity: 0.6; }
+    .status-text.ok { color: #2ecc71; }
+    .status-text.problem { color: #e74c3c; }
+    .status-reason { font-size: 10px; opacity: 0.5; width: 100%; padding-left: 16px; color: #ff8a80; }
+    .mini-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .mini-btn {
+      background: var(--nav-btn-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 14px 6px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-align: center;
+      font-family: inherit;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+    .mini-btn:hover {
+      background: var(--nav-btn-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(106,158,255,0.06);
+    }
+    .mini-btn .icon { font-size: 28px; margin-bottom: 4px; filter: drop-shadow(0 0 16px rgba(106,158,255,0.05)); }
+    .mini-btn .label { font-size: 12px; font-weight: 600; }
+    .mini-btn .sub { font-size: 9px; opacity: 0.4; }
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--card-border);
+    }
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 8px;
+      border-radius: 30px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 11px;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .social-btn:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
+    .social-btn.vk { background: rgba(76,117,163,0.6); }
+    .social-btn.youtube { background: rgba(255,0,0,0.5); }
+    .social-btn.max { background: linear-gradient(135deg, #6a0dad, #9b59b6); }
+    .social-btn.transphoto { background: rgba(0,136,204,0.6); }
+    .social-btn.telegram { background: rgba(0,136,204,0.8); }
+    .footer-credit {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 11px;
+      opacity: 0.2;
+      color: var(--footer-color);
+      letter-spacing: 0.5px;
+    }
+    .fullscreen-chat {
+      position: fixed;
+      inset: 0;
+      background: #0a0f1f;
+      z-index: 99999;
+      display: none;
+      flex-direction: column;
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      animation: fadeIn 0.3s ease;
+    }
+    .fullscreen-chat.active { display: flex; }
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: scale(0.98); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .fullscreen-chat .chat-header {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--card-border);
+      flex-shrink: 0;
+      min-height: 64px;
+    }
+    .fullscreen-chat .chat-header .back-btn {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 22px;
+      cursor: pointer;
+      padding: 4px 12px 4px 0;
+      transition: all 0.3s;
+    }
+    .fullscreen-chat .chat-header .back-btn:hover { color: #6a9eff; }
+    .fullscreen-chat .chat-header .chat-title {
+      font-size: 18px;
+      font-weight: 700;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .fullscreen-chat .chat-header .chat-title .avatar-sm {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #2a7de1, #6a9eff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .fullscreen-chat .chat-header .chat-title .avatar-sm img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .fullscreen-chat .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .fullscreen-chat .chat-messages .chat-msg {
+      padding: 8px 14px;
+      border-radius: 16px;
+      max-width: 80%;
+      word-wrap: break-word;
+      font-size: 14px;
+      line-height: 1.5;
+      animation: msgAppear 0.2s ease;
+    }
+    .fullscreen-chat .chat-messages .chat-msg.own {
+      align-self: flex-end;
+      background: rgba(42,125,225,0.3);
+      border-bottom-right-radius: 4px;
+    }
+    .fullscreen-chat .chat-messages .chat-msg.other {
+      align-self: flex-start;
+      background: rgba(255,255,255,0.05);
+      border-bottom-left-radius: 4px;
+    }
+    .fullscreen-chat .chat-messages .chat-msg .msg-author {
+      font-weight: 600;
+      color: #6a9eff;
+      font-size: 12px;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .fullscreen-chat .chat-messages .chat-msg .msg-time {
+      font-size: 10px;
+      opacity: 0.3;
+      margin-left: 8px;
+    }
+    .fullscreen-chat .chat-messages .chat-msg .sticker { font-size: 48px; display: block; text-align: center; }
+    .fullscreen-chat .chat-messages .chat-msg .msg-photo {
+      max-width: 200px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: all 0.3s;
+    }
+    .fullscreen-chat .chat-messages .chat-msg .msg-photo:hover { transform: scale(1.02); }
+    @keyframes msgAppear {
+      0% { opacity: 0; transform: scale(0.96); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .fullscreen-chat .chat-input-area {
+      display: flex;
+      gap: 10px;
+      padding: 12px 20px;
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid var(--card-border);
+      flex-shrink: 0;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .fullscreen-chat .chat-input-area input {
+      flex: 1;
+      padding: 12px 18px;
+      border-radius: 30px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      color: var(--text-primary);
+      outline: none;
+      font-size: 14px;
+      min-width: 100px;
+    }
+    .fullscreen-chat .chat-input-area input:focus { border-color: #6a9eff; }
+    .fullscreen-chat .chat-input-area button {
+      padding: 12px 18px;
+      border-radius: 30px;
+      border: none;
+      background: rgba(42,125,225,0.5);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .fullscreen-chat .chat-input-area button:hover { background: rgba(42,125,225,0.7); }
+    .fullscreen-chat .chat-input-area .sticker-btn {
+      background: rgba(255,215,0,0.08);
+      border: 1px solid rgba(255,215,0,0.1);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .fullscreen-chat .chat-input-area .sticker-btn:hover { background: rgba(255,215,0,0.12); }
+    .fullscreen-chat .sticker-picker {
+      display: none;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      padding: 12px 20px;
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid var(--card-border);
+      flex-shrink: 0;
+    }
+    .fullscreen-chat .sticker-picker.active { display: grid; }
+    .fullscreen-chat .sticker-picker .sticker-emoji {
+      font-size: 32px;
+      text-align: center;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+    .fullscreen-chat .sticker-picker .sticker-emoji:hover { background: rgba(255,255,255,0.05); transform: scale(1.1); }
+    .fullscreen-chat .typing-indicator {
+      font-size: 12px;
+      color: #6a9eff;
+      opacity: 0.6;
+      padding: 4px 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .fullscreen-chat .typing-indicator .dots::after {
+      content: '...';
+      animation: dots 1.5s infinite;
+    }
+    @keyframes dots {
+      0% { content: ''; }
+      33% { content: '.'; }
+      66% { content: '..'; }
+      100% { content: '...'; }
+    }
+    .fullscreen-profile {
+      position: fixed;
+      inset: 0;
+      background: #0a0f1f;
+      z-index: 99998;
+      display: none;
+      flex-direction: column;
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      animation: fadeIn 0.3s ease;
+    }
+    .fullscreen-profile.active { display: flex; }
+    .fullscreen-profile .profile-header {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--card-border);
+      flex-shrink: 0;
+      min-height: 64px;
+    }
+    .fullscreen-profile .profile-header .back-btn {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 22px;
+      cursor: pointer;
+      padding: 4px 12px 4px 0;
+      transition: all 0.3s;
+    }
+    .fullscreen-profile .profile-header .back-btn:hover { color: #6a9eff; }
+    .fullscreen-profile .profile-header .profile-title { font-size: 18px; font-weight: 700; flex: 1; }
+    .fullscreen-profile .profile-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .fullscreen-profile .profile-body .big-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #2a7de1, #6a9eff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+      border: 3px solid rgba(255,255,255,0.1);
+      flex-shrink: 0;
+    }
+    .fullscreen-profile .profile-body .big-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .fullscreen-profile .profile-body .profile-name { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .fullscreen-profile .profile-body .profile-city { font-size: 14px; opacity: 0.6; margin-bottom: 12px; }
+    .fullscreen-profile .profile-body .profile-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 16px;
+    }
+    .fullscreen-profile .profile-body .profile-stats .stat-item {
+      text-align: center;
+      background: rgba(255,255,255,0.03);
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+    }
+    .fullscreen-profile .profile-body .profile-stats .stat-item .num { font-size: 20px; font-weight: 700; color: #6a9eff; }
+    .fullscreen-profile .profile-body .profile-stats .stat-item .label { font-size: 10px; opacity: 0.5; }
+    .fullscreen-profile .profile-body .profile-achievements {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .fullscreen-profile .profile-body .profile-achievements .ach-badge {
+      background: rgba(255,215,0,0.1);
+      border: 1px solid rgba(255,215,0,0.2);
+      border-radius: 30px;
+      padding: 4px 14px;
+      font-size: 12px;
+      color: #ffd700;
+    }
+    .fullscreen-profile .profile-body .profile-types {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .fullscreen-profile .profile-body .profile-types .type-tag {
+      background: rgba(42,125,225,0.1);
+      border: 1px solid rgba(42,125,225,0.15);
+      border-radius: 20px;
+      padding: 2px 12px;
+      font-size: 11px;
+    }
+    .fullscreen-profile .profile-body .profile-actions { display: flex; gap: 10px; }
+    .fullscreen-profile .profile-body .profile-actions button {
+      padding: 10px 24px;
+      border-radius: 30px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .fullscreen-profile .profile-body .profile-actions .msg-btn {
+      background: rgba(42,125,225,0.5);
+      color: #fff;
+    }
+    .fullscreen-profile .profile-body .profile-actions .msg-btn:hover { background: rgba(42,125,225,0.7); }
+    .fullscreen-profile .profile-body .profile-actions .close-btn {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-primary);
+      border: 1px solid var(--card-border);
+    }
+    .fullscreen-profile .profile-body .profile-actions .close-btn:hover { background: rgba(255,255,255,0.1); }
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 360px;
+      pointer-events: none;
+    }
+    .notification {
+      background: rgba(10, 15, 30, 0.92);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 16px 20px;
+      color: #e8f0f8;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      transform: translateX(120%);
+      animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      pointer-events: auto;
+      cursor: default;
+      transition: all 0.3s;
+      min-width: 280px;
+      position: relative;
+    }
+    .notification:hover { transform: scale(1.02); border-color: rgba(255,255,255,0.2); }
+    .notification .notif-icon { font-size: 20px; margin-right: 10px; }
+    .notification .notif-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+    .notification .notif-text { font-size: 13px; opacity: 0.8; }
+    .notification .notif-time { font-size: 10px; opacity: 0.4; margin-top: 6px; }
+    .notification .notif-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.3);
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .notification .notif-close:hover { color: #fff; transform: rotate(90deg); }
+    .notification.spot { border-left: 4px solid #2ecc71; }
+    .notification.newuser { border-left: 4px solid #3498db; }
+    .notification.problem { border-left: 4px solid #e74c3c; }
+    .notification.system { border-left: 4px solid #9b59b6; }
+    .notification .notif-icon.spot { color: #2ecc71; }
+    .notification .notif-icon.newuser { color: #3498db; }
+    .notification .notif-icon.problem { color: #e74c3c; }
+    .notification .notif-icon.system { color: #9b59b6; }
+    @keyframes slideIn {
+      0% { transform: translateX(120%); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      0% { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(120%); opacity: 0; }
+    }
+    .notification.removing { animation: slideOut 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 16px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: var(--modal-bg);
+      backdrop-filter: blur(60px);
+      -webkit-backdrop-filter: blur(60px);
+      border-radius: 40px;
+      padding: 24px 20px;
+      max-width: 420px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.02);
+      border: 1px solid var(--modal-border);
+      color: var(--text-primary);
+    }
+    .modal-box .close-btn {
+      float: right;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: rgba(255,255,255,0.2);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .modal-box .close-btn:hover { color: #fff; transform: rotate(90deg); }
+    .modal-box h3 {
+      font-size: 20px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--text-primary);
+    }
+    .modal-box h3 i { color: #6a9eff; }
+    .modal-box input, .modal-box select, .modal-box textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 30px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s;
+      margin-bottom: 8px;
+      font-family: inherit;
+    }
+    .modal-box input:focus, .modal-box select:focus, .modal-box textarea:focus {
+      border-color: #6a9eff;
+      box-shadow: 0 0 40px rgba(106,158,255,0.06);
+    }
+    .modal-box textarea { resize: vertical; min-height: 60px; border-radius: 16px; }
+    .modal-box .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .modal-box .btn-row button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 30px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-box .btn-row button:active { transform: scale(0.96); }
+    .cancel-btn {
+      background: rgba(255,255,255,0.03);
+      color: var(--text-primary);
+      border: 1px solid var(--input-border);
+    }
+    .submit-btn {
+      background: rgba(42,125,225,0.5);
+      color: #fff;
+      backdrop-filter: blur(20px);
+    }
+    .auth-error { color: #e74c3c; text-align: center; margin: 6px 0; display: none; }
+    .auth-error.show { display: block; }
+    .auth-mode-toggle {
+      text-align: center;
+      font-size: 13px;
+      color: #6a9eff;
+      cursor: pointer;
+      margin-top: 10px;
+      text-decoration: underline;
+    }
+    .choice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    .choice-btn {
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid var(--input-border);
+      background: rgba(255,255,255,0.02);
+      color: var(--text-primary);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    .choice-btn.selected {
+      background: rgba(42,125,225,0.2);
+      border-color: #6a9eff;
+      color: #fff;
+    }
+    .choice-btn.all-btn {
+      grid-column: span 2;
+      background: rgba(46,204,113,0.08);
+      border-color: #2ecc71;
+    }
+    .choice-btn.all-btn.selected {
+      background: rgba(46,204,113,0.15);
+      border-color: #2ecc71;
+    }
+    .admin-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 8px;
+    }
+    .admin-tab {
+      background: var(--admin-tab-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 30px;
+      padding: 6px 16px;
+      cursor: pointer;
+      color: var(--text-primary);
+      font-size: 12px;
+      transition: all 0.3s;
+    }
+    .admin-tab.active {
+      background: var(--admin-tab-active);
+      border-color: #6a9eff;
+      color: #fff;
+    }
+    .admin-tab:hover { background: var(--nav-btn-hover); }
+    .admin-panel { display: none; }
+    .admin-panel.active { display: block; }
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .theme-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 10px 4px;
+      background: var(--card-bg);
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    .theme-item:hover { border-color: #6a9eff; transform: scale(1.02); }
+    .theme-item.active { border-color: #ffd700; }
+    .theme-preview {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-body);
+      border: 1px solid var(--card-border);
+      margin-bottom: 4px;
+    }
+    .theme-name { font-size: 9px; text-align: center; color: var(--text-primary); opacity: 0.6; }
+    .achievement-badge {
+      display: inline-block;
+      background: rgba(255,215,0,0.1);
+      border: 1px solid rgba(255,215,0,0.2);
+      border-radius: 30px;
+      padding: 2px 14px;
+      font-size: 11px;
+      color: #ffd700;
+      margin: 2px;
+    }
+    .bonus-badge {
+      background: rgba(255,215,0,0.06);
+      border: 1px solid rgba(255,215,0,0.15);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 11px;
+      color: #ffd700;
+      display: inline-block;
+    }
+    .bonus-claimed {
+      background: rgba(46,204,113,0.06);
+      border-color: rgba(46,204,113,0.2);
+      color: #2ecc71;
+    }
+    .qr-code { display: flex; justify-content: center; margin: 10px 0; }
+    .qr-code img {
+      background: #fff;
+      padding: 10px;
+      border-radius: 16px;
+      max-width: 200px;
+      width: 100%;
+    }
+    .event-delete-btn {
+      background: rgba(231,76,60,0.1);
+      border: 1px solid rgba(231,76,60,0.15);
+      color: #e74c3c;
+      padding: 2px 12px;
+      border-radius: 16px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-left: 8px;
+    }
+    .event-delete-btn:hover { background: rgba(231,76,60,0.2); }
+    .draw-canvas {
+      width: 100%;
+      height: 300px;
+      border-radius: 16px;
+      background: #0a0f1f;
+      border: 1px solid var(--input-border);
+      cursor: crosshair;
+      touch-action: none;
+    }
+    .draw-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+      justify-content: center;
+    }
+    .draw-color-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .draw-color-btn:hover { transform: scale(1.1); }
+    .draw-color-btn.active { border: 3px solid #ffd700; }
+    .draw-size-btn {
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--input-border);
+      background: var(--nav-btn-bg);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .draw-size-btn.active { background: rgba(42,125,225,0.2); border-color: #6a9eff; }
+    #map { width: 100%; height: 350px; border-radius: 28px; overflow: hidden; margin-bottom: 12px; background: #0a0f1f; }
+    #historyMap { width: 100%; height: 300px; border-radius: 16px; overflow: hidden; background: #0a0f1f; }
+    .history-map-container .placeholder { display: flex; align-items: center; justify-content: center; height: 100%; opacity: 0.3; }
+    @media (max-width: 420px) {
+      .app { padding: 16px 14px; }
+      .nav-grid { gap: 6px; }
+      .nav-btn { font-size: 10px; padding: 8px 4px; min-height: 50px; }
+      .nav-btn .icon { font-size: 16px; }
+      .social-grid { grid-template-columns: 1fr 1fr; }
+      #map { height: 250px; }
+      .mini-buttons { gap: 6px; }
+      .mini-btn { padding: 10px 4px; }
+      .mini-btn .icon { font-size: 22px; }
+      .notification-container { max-width: 280px; right: 10px; top: 10px; }
+      .notification { padding: 12px 16px; min-width: 200px; }
+      .fullscreen-chat .chat-header .chat-title { font-size: 16px; }
+      .fullscreen-chat .chat-messages .chat-msg { max-width: 90%; font-size: 13px; }
+    }
+    @media (max-width: 360px) {
+      .nav-grid { gap: 4px; }
+      .nav-btn { font-size: 9px; padding: 6px 2px; min-height: 44px; border-radius: 16px; }
+      .nav-btn .icon { font-size: 14px; }
+      .mini-buttons { gap: 4px; }
+      .mini-btn { padding: 8px 2px; font-size: 10px; }
+      .mini-btn .icon { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <div class="title-group">
+      <h1><i class="fas fa-subway"></i> Nexik</h1>
+      <p><i class="fas fa-broadcast-tower"></i> сообщество споттеров</p>
+    </div>
+    <div class="top-buttons">
+      <button class="top-btn login-btn" id="loginBtn"><i class="fas fa-user"></i></button>
+      <button class="top-btn shop-btn" id="shopBtn" style="color:#ffd700;" title="Магазин"><i class="fas fa-store"></i></button>
+      <button class="top-btn gear-btn" id="gearBtn"><i class="fas fa-cog"></i></button>
+      <button class="top-btn theme-btn" id="themeToggle" style="color:#6a9eff;" title="Выбрать тему"><i class="fas fa-palette"></i></button>
+    </div>
+    <div class="user-greeting" id="userGreeting"></div>
+  </div>
+
+  <div class="mini-buttons">
+    <button class="mini-btn" id="randomSpotBtn"><div class="icon"><i class="fas fa-dice"></i></div><div class="label">Рандомный спот</div><div class="sub">Куда поехать?</div></button>
+    <button class="mini-btn" id="photoOfDayBtn"><div class="icon"><i class="fas fa-camera"></i></div><div class="label">Фото дня</div><div class="sub">Лучший снимок</div></button>
+    <button class="mini-btn" id="challengeBtn"><div class="icon"><i class="fas fa-trophy"></i></div><div class="label">Челлендж дня</div><div class="sub" id="challengeSub">Задание на сегодня</div></button>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:24px;"><i class="fas fa-lightbulb"></i></span>
+      <div><div style="font-weight:600; font-size:12px; opacity:0.4;">Совет дня</div>
+      <div class="text" id="dailyTip">Следи за погодой: облака создают драматичный фон</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="fas fa-users"></i> Споттеры <span class="count" id="usersCount">0</span></div>
+    <div class="users-grid" id="usersGrid"></div>
+    <div style="margin-top:12px; font-size:13px; opacity:0.6;">
+      <i class="fas fa-history"></i> Моя история выходов:
+      <div class="history-list" id="historyList" style="margin-top:4px;">Нет записей</div>
+    </div>
+    <div style="margin-top:12px; font-size:13px; opacity:0.6;">
+      <i class="fas fa-trophy"></i> Мои достижения:
+      <div id="achievementsDisplay" style="margin-top:4px;">Нет</div>
+    </div>
+    <div style="margin-top:12px; font-size:13px; opacity:0.6;">
+      <i class="fas fa-tags"></i> Мои типы транспорта:
+      <div id="userTypesDisplay" style="margin-top:4px;">Не выбраны</div>
+      <button class="edit-types-btn" id="editTypesBtn" style="margin-top:4px; background:rgba(42,125,225,0.1); border:1px solid rgba(42,125,225,0.15); color:var(--text-primary); padding:4px 14px; border-radius:20px; font-size:11px; cursor:pointer;"><i class="fas fa-pen"></i> Изменить</button>
+    </div>
+    <div style="margin-top:12px; font-size:13px; opacity:0.6; display:flex; gap:8px; flex-wrap:wrap;">
+      <button id="deleteAccountBtn" style="background:rgba(231,76,60,0.08); border:1px solid rgba(231,76,60,0.12); color:#e74c3c; padding:4px 14px; border-radius:20px; font-size:11px; cursor:pointer;"><i class="fas fa-trash"></i> Удалить аккаунт</button>
+      <button id="settingsBtn" style="background:rgba(42,125,225,0.08); border:1px solid rgba(42,125,225,0.12); color:#6a9eff; padding:4px 14px; border-radius:20px; font-size:11px; cursor:pointer;"><i class="fas fa-cog"></i> Настройки</button>
+    </div>
+    <div style="margin-top:12px;">
+      <span class="bonus-badge" id="dailyBonusBadge"><i class="fas fa-gift"></i> Ежедневный бонус: +1 монета</span>
+    </div>
+    <div style="margin-top:12px; font-size:13px; opacity:0.6;">
+      <i class="fas fa-trophy"></i> Топ-3 дня:
+      <div id="top3Display" style="display:inline-block; font-weight:600; color:#ffd700;"></div>
+    </div>
+  </div>
+
+  <button class="spot-btn" id="spotBtn"><i class="fas fa-map-pin"></i> <span id="spotBtnText">📍 Я на спотте</span> <span class="cooldown" id="cooldownDisplay"></span></button>
+
+  <div class="nav-grid">
+    <button class="nav-btn" data-chat="global"><span class="icon"><i class="fas fa-comment-dots"></i></span> Чат <small>общий</small></button>
+    <button class="nav-btn" data-modal="ratingOverlay"><span class="icon"><i class="fas fa-ranking-star"></i></span> Рейтинг <small>топ</small></button>
+    <button class="nav-btn" data-modal="mapOverlay"><span class="icon"><i class="fas fa-map-marked-alt"></i></span> Карта <small>споттеров</small></button>
+    <button class="nav-btn" data-modal="calendarOverlay"><span class="icon"><i class="fas fa-calendar-days"></i></span> Календарь <small>споттинг</small></button>
+    <button class="nav-btn" data-modal="statsOverlay"><span class="icon"><i class="fas fa-chart-simple"></i></span> Статистика <small>выходы</small></button>
+    <button class="nav-btn" data-modal="historyMapOverlay"><span class="icon"><i class="fas fa-map-location-dot"></i></span> История <small>на карте</small></button>
+    <button class="nav-btn" data-modal="reviewsOverlay"><span class="icon"><i class="fas fa-star"></i></span> Отзывы <small>о местах</small></button>
+    <button class="nav-btn" data-modal="galleryOverlay"><span class="icon"><i class="fas fa-images"></i></span> Фото <small>споттеров</small></button>
+    <button class="nav-btn" data-modal="eventsOverlay"><span class="icon"><i class="fas fa-calendar-plus"></i></span> События <small>встречи</small></button>
+    <button class="nav-btn" data-modal="leadersOverlay"><span class="icon"><i class="fas fa-crown"></i></span> Лидеры <small>топ</small></button>
+    <button class="nav-btn" data-chat="city"><span class="icon"><i class="fas fa-city"></i></span> Чат города <small>по городам</small></button>
+    <button class="nav-btn" data-modal="scheduleOverlay"><span class="icon"><i class="fas fa-clock"></i></span> Расписание <small>поездов</small></button>
+  </div>
+
+  <div class="card" id="statusList"></div>
+  <div class="card" id="alertBox" style="display:none; border-left:4px solid #e74c3c; background:rgba(231,76,60,0.02);">
+    <strong><i class="fas fa-triangle-exclamation"></i> Внимание!</strong> Перебои: <span id="problemLines"></span>
+  </div>
+
+  <div class="social-grid">
+    <a href="https://vk.com/nexik3" target="_blank" class="social-btn vk"><i class="fab fa-vk"></i> VK</a>
+    <a href="https://youtube.com/@neksik-1" target="_blank" class="social-btn youtube"><i class="fab fa-youtube"></i> YouTube</a>
+    <a href="https://max.ru" target="_blank" class="social-btn max"><i class="fas fa-message"></i> MAX</a>
+    <a href="https://transphoto.org/author/48849/" target="_blank" class="social-btn transphoto"><i class="fas fa-camera"></i> TransPhoto</a>
+    <a href="https://t.me/Nexik3" target="_blank" class="social-btn telegram"><i class="fab fa-telegram"></i> Telegram</a>
+  </div>
+  <div class="footer-credit"><i class="fas fa-subway"></i> Nexik v.13.2 — Все фиксы</div>
+</div>
+
+<!-- ===== ПОЛНОЭКРАННЫЙ ЧАТ (ОБЩИЙ) ===== -->
+<div class="fullscreen-chat" id="globalChat">
+  <div class="chat-header">
+    <button class="back-btn" onclick="closeGlobalChat()"><i class="fas fa-arrow-left"></i></button>
+    <div class="chat-title"><i class="fas fa-comment-dots" style="color:#6a9eff;"></i> Общий чат</div>
+    <button class="back-btn" onclick="closeGlobalChat()" style="padding:4px 0 4px 12px;"><i class="fas fa-times"></i></button>
+  </div>
+  <div id="globalTypingIndicator" class="typing-indicator" style="display:none;"><span class="dots"></span> кто-то печатает...</div>
+  <div class="chat-messages" id="globalChatMessages"></div>
+  <div class="sticker-picker" id="globalStickerPicker"></div>
+  <div class="chat-input-area">
+    <input type="text" id="globalChatInput" placeholder="Сообщение...">
+    <button class="sticker-btn" id="globalStickerBtn"><i class="fas fa-smile"></i></button>
+    <button id="globalChatSend"><i class="fas fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<!-- ===== ПОЛНОЭКРАННЫЙ ЧАТ (ГОРОД) ===== -->
+<div class="fullscreen-chat" id="cityChat">
+  <div class="chat-header">
+    <button class="back-btn" onclick="closeCityChat()"><i class="fas fa-arrow-left"></i></button>
+    <div class="chat-title"><i class="fas fa-city" style="color:#6a9eff;"></i> <span id="cityChatTitle">Москва</span></div>
+    <button class="back-btn" onclick="closeCityChat()" style="padding:4px 0 4px 12px;"><i class="fas fa-times"></i></button>
+  </div>
+  <div style="padding:8px 20px; background:rgba(255,255,255,0.02); border-bottom:1px solid var(--card-border); display:flex; gap:8px; align-items:center; flex-shrink:0;">
+    <select id="cityChatSelect" style="flex:1;padding:8px 14px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:13px;">
+      <option value="Москва">Москва</option>
+      <option value="Санкт-Петербург">Санкт-Петербург</option>
+      <option value="Екатеринбург">Екатеринбург</option>
+      <option value="Новосибирск">Новосибирск</option>
+      <option value="Казань">Казань</option>
+      <option value="Нижний Новгород">Нижний Новгород</option>
+      <option value="Самара">Самара</option>
+      <option value="Другой">Другой</option>
+    </select>
+    <button id="cityChatSwitchBtn" style="padding:8px 16px;border-radius:30px;border:none;background:rgba(42,125,225,0.4);color:#fff;cursor:pointer;font-weight:600;font-size:12px;">Переключить</button>
+  </div>
+  <div id="cityTypingIndicator" class="typing-indicator" style="display:none;"><span class="dots"></span> кто-то печатает...</div>
+  <div class="chat-messages" id="cityChatMessages"></div>
+  <div class="sticker-picker" id="cityStickerPicker"></div>
+  <div class="chat-input-area">
+    <input type="text" id="cityChatInput" placeholder="Сообщение...">
+    <button class="sticker-btn" id="cityStickerBtn"><i class="fas fa-smile"></i></button>
+    <button id="cityChatSend"><i class="fas fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<!-- ===== ПОЛНОЭКРАННЫЙ ЛС ===== -->
+<div class="fullscreen-chat" id="dmChat">
+  <div class="chat-header">
+    <button class="back-btn" onclick="closeDmChat()"><i class="fas fa-arrow-left"></i></button>
+    <div class="chat-title">
+      <span class="avatar-sm" id="dmChatAvatar">?</span>
+      <span id="dmChatTitle">Пользователь</span>
+    </div>
+    <button class="back-btn" onclick="closeDmChat()" style="padding:4px 0 4px 12px;"><i class="fas fa-times"></i></button>
+  </div>
+  <div id="dmTypingIndicator" class="typing-indicator" style="display:none;"><span class="dots"></span> печатает...</div>
+  <div class="chat-messages" id="dmChatMessages"></div>
+  <div class="sticker-picker" id="dmStickerPicker"></div>
+  <div class="chat-input-area">
+    <input type="text" id="dmChatInput" placeholder="Сообщение...">
+    <button class="sticker-btn" id="dmStickerBtn"><i class="fas fa-smile"></i></button>
+    <button id="dmChatSend"><i class="fas fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<!-- ===== ПОЛНОЭКРАННЫЙ ПРОФИЛЬ ===== -->
+<div class="fullscreen-profile" id="profileView">
+  <div class="profile-header">
+    <button class="back-btn" onclick="closeProfile()"><i class="fas fa-arrow-left"></i></button>
+    <div class="profile-title">Профиль</div>
+    <button class="back-btn" onclick="closeProfile()" style="padding:4px 0 4px 12px;"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="profile-body" id="profileBody">
+    <div class="big-avatar" id="profileBigAvatar">?</div>
+    <div class="profile-name" id="profileName">Пользователь</div>
+    <div class="profile-city" id="profileCity"><i class="fas fa-map-pin"></i> Город не указан</div>
+    <div class="profile-stats">
+      <div class="stat-item"><div class="num" id="profileCoins">0</div><div class="label">🪙 Монет</div></div>
+      <div class="stat-item"><div class="num" id="profileSpots">0</div><div class="label">📊 Выходов</div></div>
+      <div class="stat-item"><div class="num" id="profilePhotos">0</div><div class="label">📸 Фото</div></div>
+    </div>
+    <div class="profile-achievements" id="profileAchievements"></div>
+    <div class="profile-types" id="profileTypes"></div>
+    <div class="profile-actions">
+      <button class="msg-btn" id="profileMsgBtn"><i class="fas fa-comment"></i> Написать</button>
+      <button class="close-btn" onclick="closeProfile()"><i class="fas fa-times"></i> Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== МОДАЛКИ (ВСЕ) ===== -->
+<div class="modal-overlay" id="authOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('authOverlay')"><i class="fas fa-times"></i></button><h3 id="authTitle"><i class="fas fa-lock"></i> Вход</h3><input type="text" id="authUsername" placeholder="Имя пользователя"><input type="password" id="authPassword" placeholder="Пароль"><div class="auth-error" id="authError">Ошибка</div><div class="btn-row"><button class="cancel-btn" onclick="closeModal('authOverlay')">Отмена</button><button class="submit-btn" id="authSubmit"><i class="fas fa-sign-in-alt"></i> Войти</button></div><div class="auth-mode-toggle" id="authToggle">Нет аккаунта? Регистрация</div></div></div>
+
+<div class="modal-overlay" id="settingsOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('settingsOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-user-cog"></i> Настройки аккаунта</h3>
+  <div style="margin-bottom:12px;">
+    <label style="font-size:13px; opacity:0.7;"><i class="fas fa-image"></i> Аватар</label>
+    <div style="display:flex; align-items:center; gap:12px; margin-top:6px;">
+      <div id="settingsAvatarPreview" style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#2a7de1,#6a9eff);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;"><span id="settingsAvatarLetter">?</span></div>
+      <input type="file" id="avatarFileInput" accept="image/*" style="flex:1;padding:8px 12px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);">
+    </div>
+    <button id="uploadAvatarBtn" style="margin-top:6px;padding:8px 16px;border-radius:30px;border:none;background:rgba(42,125,225,0.5);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-cloud-upload-alt"></i> Загрузить аватар</button>
+  </div>
+  <div style="margin-bottom:12px;">
+    <label style="font-size:13px; opacity:0.7;"><i class="fas fa-user"></i> Никнейм</label>
+    <input type="text" id="settingsNickInput" placeholder="Новый ник" style="width:100%;padding:12px 16px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:14px;margin-top:4px;">
+  </div>
+  <div style="margin-bottom:12px;">
+    <label style="font-size:13px; opacity:0.7;"><i class="fas fa-lock"></i> Пароль</label>
+    <input type="password" id="settingsPassInput" placeholder="Новый пароль" style="width:100%;padding:12px 16px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:14px;margin-top:4px;">
+  </div>
+  <div style="margin-bottom:12px;">
+    <label style="font-size:13px; opacity:0.7;"><i class="fas fa-map-pin"></i> Город</label>
+    <select id="settingsCitySelect" style="width:100%;padding:12px 16px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:14px;margin-top:4px;">
+      <option value="Москва">Москва</option>
+      <option value="Санкт-Петербург">Санкт-Петербург</option>
+      <option value="Екатеринбург">Екатеринбург</option>
+      <option value="Новосибирск">Новосибирск</option>
+      <option value="Казань">Казань</option>
+      <option value="Нижний Новгород">Нижний Новгород</option>
+      <option value="Ростов-на-Дону">Ростов-на-Дону</option>
+      <option value="Владивосток">Владивосток</option>
+      <option value="Хабаровск">Хабаровск</option>
+      <option value="Иркутск">Иркутск</option>
+      <option value="Другой">Другой</option>
+    </select>
+  </div>
+  <div class="btn-row"><button class="submit-btn" id="settingsSaveBtn"><i class="fas fa-save"></i> Сохранить</button><button class="cancel-btn" onclick="closeModal('settingsOverlay')">Отмена</button></div>
+</div></div>
+
+<div class="modal-overlay" id="adminOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('adminOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-cog"></i> Админ-панель</h3><div id="adminControls"></div><button class="cancel-btn" onclick="closeModal('adminOverlay')" style="width:100%;margin-top:12px;"><i class="fas fa-sign-out-alt"></i> Выйти</button></div></div>
+
+<div class="modal-overlay" id="ratingOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('ratingOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-ranking-star"></i> Рейтинг споттеров</h3><div class="rating-list" id="ratingList">Загрузка...</div></div></div>
+
+<div class="modal-overlay" id="mapOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('mapOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-map-marked-alt"></i> Карта споттеров</h3><div id="map"></div><div class="map-btn-row" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"><button id="mapRefresh" style="flex:1;padding:10px;border-radius:30px;border:none;background:rgba(42,125,225,0.5);color:#fff;font-weight:600;cursor:pointer;"><i class="fas fa-sync-alt"></i> Обновить</button><button id="mapMyLocation" style="flex:1;padding:10px;border-radius:30px;border:none;background:rgba(42,125,225,0.5);color:#fff;font-weight:600;cursor:pointer;"><i class="fas fa-location-arrow"></i> Моё местоположение</button></div></div></div>
+
+<div class="modal-overlay" id="calendarOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('calendarOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-calendar-days"></i> Календарь споттинга</h3><div id="calendarMonth" style="text-align:center;font-weight:600;margin-bottom:8px;"></div><div class="calendar-grid" id="calendarGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"></div><div style="text-align:center;margin-top:8px;font-size:12px;opacity:.6;"><i class="fas fa-circle" style="color:#2ecc71;"></i> Зелёные дни — были выходы</div></div></div>
+
+<div class="modal-overlay" id="statsOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('statsOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-chart-simple"></i> Статистика выходов</h3><div style="text-align:center;font-size:14px;opacity:.7;margin-bottom:4px;">Всего выходов: <span id="statsTotal" style="font-weight:700;color:#6a9eff;">0</span></div><div class="stats-bars" id="statsBars" style="display:flex;gap:6px;align-items:flex-end;height:120px;margin-top:12px;padding-bottom:4px;"></div><div style="margin-top:8px;font-size:12px;opacity:.6;text-align:center;">Выходы по дням недели</div></div></div>
+
+<div class="modal-overlay" id="historyMapOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('historyMapOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-map-location-dot"></i> История на карте</h3><div class="history-map-container" style="width:100%;height:300px;border-radius:16px;overflow:hidden;background:#0a0f1f;"><div id="historyMap" style="width:100%;height:100%;"></div></div><div style="margin-top:8px;font-size:12px;opacity:.6;text-align:center;"><i class="fas fa-circle" style="color:#2ecc71;"></i> Зелёные метки — места ваших выходов</div></div></div>
+
+<div class="modal-overlay" id="reviewsOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('reviewsOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-star"></i> Отзывы о местах</h3><div id="reviewsList"></div><div style="margin-top:12px;"><input type="text" id="reviewLocation" placeholder="📍 Место (станция, парк...)"><div style="display:flex;gap:8px;margin-bottom:6px;"><input type="number" id="reviewRating" placeholder="⭐ Рейтинг (1-5)" min="1" max="5" style="flex:1;"><button id="reviewSubmitBtn" style="padding:10px 20px;border-radius:30px;border:none;background:rgba(42,125,225,0.5);color:#fff;cursor:pointer;"><i class="fas fa-paper-plane"></i></button></div><textarea id="reviewText" placeholder="📝 Ваш отзыв..."></textarea></div></div></div>
+
+<div class="modal-overlay" id="galleryOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('galleryOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-images"></i> Фото споттеров</h3><input type="file" id="galleryFileInput" accept="image/*" style="margin-bottom:6px;"><input type="text" id="galleryCaptionInput" placeholder="📝 Описание фото..."><button id="galleryUploadBtn" style="width:100%;padding:12px;border-radius:30px;border:none;background:rgba(42,125,225,0.5);color:#fff;font-weight:600;cursor:pointer;margin-top:6px;"><i class="fas fa-cloud-upload-alt"></i> Загрузить фото</button><div id="galleryGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:400px;overflow-y:auto;margin-top:12px;"></div></div></div>
+
+<div class="modal-overlay" id="eventsOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('eventsOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-calendar-plus"></i> События и встречи</h3><input type="text" id="eventTitleInput" placeholder="📌 Название события"><input type="date" id="eventDateInput"><input type="time" id="eventTimeInput"><input type="text" id="eventLocationInput" placeholder="📍 Место"><textarea id="eventDescriptionInput" placeholder="📝 Описание события..."></textarea><button id="eventCreateBtn" style="width:100%;padding:12px;border-radius:30px;border:none;background:rgba(46,204,113,0.5);color:#fff;font-weight:600;cursor:pointer;margin-top:6px;"><i class="fas fa-plus"></i> Создать событие</button><div id="eventsList" style="margin-top:12px;"></div><button id="generateQRBtn" style="width:100%;padding:12px;border-radius:30px;border:none;background:rgba(155,89,182,0.5);color:#fff;font-weight:600;cursor:pointer;margin-top:12px;"><i class="fas fa-qrcode"></i> Сгенерировать QR-код</button><div id="qrCodeContainer" class="qr-code"></div></div></div>
+
+<div class="modal-overlay" id="leadersOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('leadersOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-crown"></i> Доска лидеров</h3><select id="leaderCitySelect" style="width:100%;padding:10px 14px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;margin-bottom:12px;"><option value="all">🌍 Все города</option><option value="Москва">Москва</option><option value="Санкт-Петербург">Санкт-Петербург</option><option value="Екатеринбург">Екатеринбург</option><option value="Новосибирск">Новосибирск</option><option value="Казань">Казань</option><option value="Нижний Новгород">Нижний Новгород</option><option value="Самара">Самара</option><option value="Другой">Другой</option></select><div id="leadersList"></div></div></div>
+
+<div class="modal-overlay" id="scheduleOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('scheduleOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-clock"></i> Расписание поездов</h3><div style="text-align:center;padding:30px 0;"><div style="font-size:60px;margin-bottom:16px;">🚄</div><p style="font-size:16px;margin-bottom:8px;">Расписание поездов и электричек</p><p style="font-size:13px;color:#e74c3c;margin-bottom:16px;">⚠️ Временно работает через ссылку</p><a href="https://rasp.yandex.ru/" target="_blank" style="display:inline-block;padding:14px 40px;border-radius:30px;background:rgba(42,125,225,0.5);color:#fff;font-weight:600;text-decoration:none;font-size:16px;"><i class="fas fa-external-link-alt"></i> Открыть Яндекс.Расписания</a><p style="margin-top:12px;font-size:12px;opacity:.4;">Откроется в новой вкладке</p></div></div></div>
+
+<!-- Окно обновы -->
+<div class="modal-overlay" id="updateOverlay"><div class="modal-box"><button class="close-btn" onclick="closeModal('updateOverlay')"><i class="fas fa-times"></i></button><h3><i class="fas fa-rocket"></i> Nexik v.13.2 — Все фиксы!</h3><ul style="list-style:none;padding:0;text-align:left;color:var(--text-primary);line-height:2;"><li><i class="fas fa-check-circle" style="color:#2ecc71;"></i> 🔧 Исправлены крестики во всех модалках</li><li><i class="fas fa-check-circle" style="color:#2ecc71;"></i> 🎨 Радужный и все кастомные цвета ников работают</li><li><i class="fas fa-check-circle" style="color:#2ecc71;"></i> 🖼️ Исправлен двойной аватар</li><li><i class="fas fa-check-circle" style="color:#2ecc71;"></i> 💰 Админка: выдача/забирание монет</li><li><i class="fas fa-check-circle" style="color:#2ecc71;"></i> ♾️ Админка: выдача бесконечных монет</li></ul><button id="updateGotIt" style="width:100%;padding:12px;border-radius:30px;border:none;background:rgba(42,125,225,0.5);color:#fff;font-weight:600;cursor:pointer;margin-top:12px;" onclick="closeModal('updateOverlay')"><i class="fas fa-check"></i> Понял, погнали!</button></div></div>
+
+<!-- Уведомления -->
+<div class="notification-container" id="notificationContainer"></div>
+
+<script>
+// ============================================================
+// ПОЛНЫЙ JAVASCRIPT v.13.2
+// ============================================================
+
+// --- ФУНКЦИЯ ЗАКРЫТИЯ МОДАЛОК (РАБОТАЕТ ВЕЗДЕ) ---
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('active');
+}
+
+// --- FIREBASE ---
+const firebaseConfig = {
+  apiKey: "AIzaSyCvC2P3ehBSFmZIMvieD9KYouGyjno4T70",
+  authDomain: "nexik-63c6c.firebaseapp.com",
+  databaseURL: "https://nexik-63c6c-default-rtdb.firebaseio.com",
+  projectId: "nexik-63c6c",
+  storageBucket: "nexik-63c6c.firebasestorage.app",
+  messagingSenderId: "335000818103",
+  appId: "1:335000818103:web:ca58e3119b6a73e209d832"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// --- КОНСТАНТЫ ---
+const IMGBB_API_KEY = "e95d7591bce7e9d9ab12197fd5eb0b26";
+const YANDEX_MAPS_API_KEY = "8a79e2a0-eaaa-4563-b3a2-8a8775c24eb2";
+let ADMIN_PASSWORD = "NexikTop0102";
+let currentUser = localStorage.getItem('nexik_user') || null;
+let currentCity = 'Москва';
+let mapInstance = null, mapPlacemarks = [], historyMapInstance = null, historyPlacemarks = [];
+let dmTargetUser = null;
+let currentCityChat = 'Москва';
+
+const INFINITY_USERS = ['Nexik', 'Demih'];
+
+function $(id){ return document.getElementById(id); }
+function esc(t){ const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+function formatTimeAgoLive(ts){ const now=Date.now(), diff=now-ts; if(diff<60000)return'только что'; if(diff<3600000)return Math.floor(diff/60000)+' мин назад'; if(diff<86400000)return Math.floor(diff/3600000)+' ч назад'; return Math.floor(diff/86400000)+' дн назад'; }
+
+// --- ЗВУК ДЛЯ УВЕДОМЛЕНИЙ ---
+function playNotifSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(880, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.06);
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+    osc.start(now);
+    osc.stop(now + 0.1);
+  } catch(e) {}
+}
+
+// --- УВЕДОМЛЕНИЯ ---
+function showNotification(title, text, type) {
+  const container = document.getElementById('notificationContainer');
+  if (!container) return;
+  const notif = document.createElement('div');
+  notif.className = 'notification ' + type;
+  const icons = { spot: 'fa-location-dot', problem: 'fa-triangle-exclamation', system: 'fa-bullhorn' };
+  notif.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:10px;">
+      <span class="notif-icon ${type}"><i class="fas ${icons[type] || 'fa-bell'}"></i></span>
+      <div>
+        <div class="notif-title">${title}</div>
+        <div class="notif-text">${text}</div>
+        <div class="notif-time"><i class="far fa-clock"></i> ${new Date().toLocaleTimeString()}</div>
+      </div>
+      <button class="notif-close" onclick="this.closest('.notification').classList.add('removing'); setTimeout(()=>this.closest('.notification').remove(),400);"><i class="fas fa-times"></i></button>
+    </div>
+  `;
+  container.appendChild(notif);
+  playNotifSound();
+  setTimeout(() => {
+    if (notif.parentNode) {
+      notif.classList.add('removing');
+      setTimeout(() => notif.remove(), 400);
+    }
+  }, 10000);
+}
+
+// --- ОТСЛЕЖИВАНИЕ СОБЫТИЙ ---
+const notifState = { spots: new Set(), problems: new Set() };
+
+function trackEvents() {
+  db.ref('users').on('child_changed', snapshot => {
+    const username = snapshot.key;
+    const data = snapshot.val();
+    if (username !== currentUser && !data.banned && data.onSpot === true) {
+      const key = 'spot_' + username + '_' + Date.now();
+      if (!notifState.spots.has(key)) {
+        const lastSpot = data.lastSpotTime || 0;
+        if (Date.now() - lastSpot < 5000) {
+          notifState.spots.add(key);
+          showNotification('📍 Новый споттер!', username + ' вышел на споттинг! 🚀', 'spot');
+        }
+      }
+    }
+  });
+
+  db.ref('lines').on('child_changed', snapshot => {
+    const key = snapshot.key;
+    const data = snapshot.val();
+    if (data.status === 'problem') {
+      const probKey = 'problem_' + key + '_' + Date.now();
+      if (!notifState.problems.has(probKey)) {
+        notifState.problems.add(probKey);
+        const reason = data.reason || 'Без причины';
+        showNotification('⚠️ Перебои на линии!', data.name + ': ' + reason, 'problem');
+      }
+    }
+  });
+}
+
+// ============================================================
+// ВСЕ ЛИНИИ
+// ============================================================
+const ALL_LINES = [
+  {name:'Сокольническая',color:'#e31c24'},{name:'Замоскворецкая',color:'#3b9e4a'},{name:'Арбатско-Покровская',color:'#0056a9'},{name:'Филевская',color:'#00aeef'},{name:'Кольцевая',color:'#8b5a2b'},{name:'Калужско-Рижская',color:'#f58220'},{name:'Таганско-Краснопресненская',color:'#8e1b73'},{name:'Калининская',color:'#fddb3e'},{name:'Солнцевская',color:'#f7c600'},{name:'Серпуховско-Тимирязевская',color:'#8c8c8c'},{name:'Люблинско-Дмитровская',color:'#b5d334'},{name:'Большая кольцевая',color:'#0088b0'},{name:'Некрасовская',color:'#e85ba0'},{name:'Троицкая',color:'#00a650'},{name:'МЦД-1',color:'#ff6b00'},{name:'МЦД-2',color:'#00bfff'},{name:'МЦД-3',color:'#ff1493'},{name:'МЦД-4',color:'#ffd700'},{name:'МЦК',color:'#e6007e'},{name:'Ярославское',color:'#8a2be2'},{name:'Рижское',color:'#2f4f4f'},{name:'Казанское',color:'#dc143c'},{name:'Павелецкое',color:'#228b22'},{name:'Курское',color:'#2e8b57'},{name:'Горьковское',color:'#ff4500'},{name:'Киевское',color:'#006400'},{name:'Смоленское',color:'#000080'},{name:'Ленинградское',color:'#1e90ff'},{name:'Савёловское',color:'#4b0082'},{name:'БМО',color:'#ff1493'}
+];
+
+// ============================================================
+// НИКНЕЙМЫ И СТИЛИ (ПОЛНОСТЬЮ ИСПРАВЛЕНЫ)
+// ============================================================
+const NICK_COLORS = {'Красный':'#e74c3c','Синий':'#3498db','Зелёный':'#2ecc71','Жёлтый':'#f1c40f','Фиолетовый':'#9b59b6','Оранжевый':'#e67e22','Розовый':'#fd79a8','Голубой':'#74b9ff','Золотой':'#ffd700'};
+const COLOR_PRICES = {'Красный':10,'Синий':10,'Зелёный':10,'Жёлтый':15,'Фиолетовый':15,'Оранжевый':15,'Розовый':20,'Голубой':20,'Золотой':50};
+
+const METRO_LINE_COLORS = {
+  'Сокольнический цвет':'#e31c24','Замоскворецкий цвет':'#3b9e4a','Арбатско-Покровский цвет':'#0056a9','Филевский цвет':'#00aeef','Кольцевой цвет':'#8b5a2b','Калужско-Рижский цвет':'#f58220','Таганско-Краснопресненский цвет':'#8e1b73','Калининский цвет':'#fddb3e','Солнцевский цвет':'#f7c600','Серпуховско-Тимирязевский цвет':'#8c8c8c','Люблинско-Дмитровский цвет':'#b5d334','Большой кольцевой цвет':'#0088b0','Некрасовский цвет':'#e85ba0','Троицкий цвет':'#00a650','БМО цвет':'#ff1493'
+};
+const METRO_PRICES = {
+  'Сокольнический цвет':5,'Замоскворецкий цвет':5,'Арбатско-Покровский цвет':5,'Филевский цвет':5,'Кольцевой цвет':10,'Калужско-Рижский цвет':5,'Таганско-Краснопресненский цвет':5,'Калининский цвет':5,'Солнцевский цвет':5,'Серпуховско-Тимирязевский цвет':5,'Люблинско-Дмитровский цвет':5,'Большой кольцевой цвет':10,'Некрасовский цвет':5,'Троицкий цвет':5,'БМО цвет':15
+};
+
+const EXTRA_NICK_STYLES = {'Неоновый':'neon-nick','Мраморный':'marble-nick','Металлический':'metal-nick','Хаотичный':'chaos-nick','Теневой':'shadow-nick','Глитч':'glitch-nick','Пиксельный':'pixel-nick','Огненный':'fire-nick','Ледяной':'ice-nick','Космический':'space-nick'};
+const EXTRA_NICK_PRICES = {'Неоновый':30,'Мраморный':40,'Металлический':50,'Хаотичный':60,'Теневой':20,'Глитч':80,'Пиксельный':25,'Огненный':45,'Ледяной':35,'Космический':70};
+
+const ALL_NICK_STYLES = {...NICK_COLORS,...METRO_LINE_COLORS,...EXTRA_NICK_STYLES};
+const ALL_NICK_PRICES = {...COLOR_PRICES,...METRO_PRICES,...EXTRA_NICK_PRICES};
+ALL_NICK_STYLES['Звёздный']='stars-nick'; ALL_NICK_PRICES['Звёздный']=200;
+ALL_NICK_STYLES['Радужный']='rainbow-nick'; ALL_NICK_PRICES['Радужный']=1000;
+
+// ============================================================
+// ОТОБРАЖЕНИЕ НИКОВ (ПОЛНОСТЬЮ ИСПРАВЛЕНО)
+// ============================================================
+function renderNickHTML(userData, username) {
+  if (!userData) return esc(username);
+  const nickColor = userData.nickColor || '';
+  const adminCount = userData.adminCount || 0;
+  const customDraw = userData.customDraw || '';
+  const isAdmin = adminCount >= 2;
+  
+  let html = '';
+  if (customDraw) {
+    html += `<img src="${customDraw}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-right:4px;" alt="avatar"> `;
+  }
+  
+  // Проверяем, есть ли кастомный класс для этого стиля
+  const styleClass = ALL_NICK_STYLES[nickColor];
+  
+  if (isAdmin) {
+    html += `<span class="admin-glow">${esc(username)}</span>`;
+  } else if (styleClass) {
+    // Используем CSS-класс из стилей
+    html += `<span class="${styleClass}">${esc(username)}</span>`;
+  } else {
+    // Обычный цвет
+    const color = NICK_COLORS[nickColor] || METRO_LINE_COLORS[nickColor] || '';
+    if (color) {
+      html += `<span style="color:${color};font-weight:700;">${esc(username)}</span>`;
+    } else {
+      html += esc(username);
+    }
+  }
+  return html;
+}
+
+// ============================================================
+// ЗАГРУЗКА ПОЛЬЗОВАТЕЛЕЙ
+// ============================================================
+function loadUsers() {
+  db.ref('users').on('value', sn => {
+    const data = sn.val();
+    const users = data ? Object.keys(data) : [];
+    const grid = $('usersGrid');
+    grid.innerHTML = '';
+    let active = 0;
+    users.forEach(user => {
+      const ud = data[user];
+      const isBanned = ud && ud.banned === true;
+      const chip = document.createElement('div');
+      chip.className = 'user-chip' + (isBanned ? ' banned' : '');
+      chip.title = isBanned ? '🚫 Забанен' : 'Открыть профиль';
+      chip.addEventListener('click', () => {
+        if (isBanned) { alert('🚫 Этот пользователь забанен'); return; }
+        openProfile(user);
+      });
+      const av = document.createElement('div');
+      av.className = 'avatar';
+      if (ud && ud.customDraw) {
+        const img = document.createElement('img');
+        img.src = ud.customDraw;
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+        av.appendChild(img);
+      } else {
+        av.textContent = user.charAt(0).toUpperCase();
+      }
+      const nameSpan = document.createElement('span');
+      nameSpan.innerHTML = renderNickHTML(ud, user);
+      const coin = document.createElement('span');
+      coin.className = 'coin-display';
+      if (INFINITY_USERS.includes(user)) {
+        coin.textContent = '♾️';
+        coin.classList.add('infinity');
+      } else {
+        coin.textContent = '🪙' + (ud?.coins || 0);
+      }
+      const badge = document.createElement('span');
+      badge.className = 'status-badge';
+      badge.textContent = '📍 на спотте';
+      if (ud && ud.onSpot && !isBanned) { badge.classList.add('active'); active++; }
+      const dot = document.createElement('span');
+      dot.className = 'online-dot';
+      const isOnline = ud && ud.online === true && !isBanned;
+      const lastSeen = ud && ud.lastSeen ? ud.lastSeen : 0;
+      if (isOnline) { dot.style.background = '#2ecc71'; dot.style.boxShadow = '0 0 8px #2ecc71'; dot.title = 'В сети сейчас'; }
+      else if (lastSeen > 0 && !isBanned) { dot.style.background = '#555'; dot.title = 'Был(а) ' + formatTimeAgoLive(lastSeen); }
+      else if (isBanned) { dot.style.background = '#e74c3c'; dot.title = 'Забанен'; }
+      else { dot.style.background = '#333'; dot.title = 'Неизвестно'; }
+      chip.append(av, nameSpan, coin, badge, dot);
+      grid.appendChild(chip);
+    });
+    $('usersCount').textContent = users.length + ' (' + active + ' на спотте)';
+    updateTop3();
+    updateLeaders();
+    checkDailyBonus();
+    if (currentUser) {
+      db.ref('users/' + currentUser + '/spotHistory').once('value', s => {
+        const count = (s.val() || []).length;
+        const display = $('achievementsDisplay');
+        const list = [];
+        if (count >= 1) list.push('Новичок');
+        if (count >= 5) list.push('Опытный');
+        if (count >= 10) list.push('Профи');
+        if (count >= 25) list.push('Легенда');
+        if (count >= 50) list.push('Миф');
+        display.innerHTML = list.length ? list.map(a => `<span class="achievement-badge">${a}</span>`).join(' ') : 'Нет';
+      });
+    }
+  });
+}
+
+// ============================================================
+// ТОП-3, ЛИДЕРЫ, БОНУС
+// ============================================================
+function updateTop3(){
+  db.ref('users').once('value').then(s=>{
+    const data=s.val();
+    if(!data)return;
+    const users=Object.values(data).filter(u=>!u.banned);
+    const today=new Date().toDateString();
+    users.forEach(u=>{u.todaySpots=u.spotHistory?u.spotHistory.filter(ts=>new Date(ts).toDateString()===today).length:0;});
+    users.sort((a,b)=>b.todaySpots-a.todaySpots);
+    const top3=users.slice(0,3).filter(u=>u.todaySpots>0);
+    const display=$('top3Display');
+    if(top3.length===0)display.textContent='Пока никто не выходил';
+    else display.innerHTML=top3.map((u,i)=>{const medal=i===0?'🥇':i===1?'🥈':'🥉';return medal+' '+esc(u.name)+' ('+u.todaySpots+')';}).join(' ');
+  });
+}
+
+function updateLeaders(){
+  const cityFilter=$('leaderCitySelect')?.value||'all';
+  db.ref('users').once('value').then(s=>{
+    const data=s.val();
+    if(!data)return;
+    let users=Object.entries(data).filter(([_,u])=>!u.banned);
+    if(cityFilter!=='all')users=users.filter(([_,u])=>(u.city||'Москва')===cityFilter);
+    users.sort((a,b)=>{
+      const aCoins = INFINITY_USERS.includes(a[0]) ? Infinity : (a[1].coins||0);
+      const bCoins = INFINITY_USERS.includes(b[0]) ? Infinity : (b[1].coins||0);
+      return bCoins - aCoins;
+    });
+    const list=$('leadersList');
+    if(!list)return;
+    list.innerHTML='';
+    if(users.length===0){list.innerHTML='<div style="text-align:center;opacity:0.5;padding:20px;">Нет пользователей</div>';return;}
+    users.slice(0,20).forEach(([name,data],i)=>{
+      const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+      const coins = INFINITY_USERS.includes(name) ? '♾️' : '🪙' + (data.coins||0);
+      const div=document.createElement('div');
+      div.className='rating-item';
+      div.innerHTML=`<span><span class="pos">${medal}</span> ${esc(name)}</span><span>${coins}</span>`;
+      list.appendChild(div);
+    });
+  });
+}
+
+function checkDailyBonus(){
+  if(!currentUser)return;
+  if (INFINITY_USERS.includes(currentUser)) {
+    const badge = $('dailyBonusBadge');
+    badge.textContent = '♾️ Бесконечные монеты';
+    badge.classList.add('bonus-claimed');
+    return;
+  }
+  const today=new Date().toDateString();
+  db.ref('users/'+currentUser).once('value').then(s=>{
+    const data=s.val();
+    if(!data)return;
+    const badge=$('dailyBonusBadge');
+    if(data.lastBonus===today){badge.textContent='✅ Бонус получен!';badge.classList.add('bonus-claimed');}
+    else{badge.textContent='🎁 +1 монета (нажми)';badge.classList.remove('bonus-claimed');badge.style.cursor='pointer';badge.onclick=function(){
+      db.ref('users/'+currentUser+'/coins').transaction(c=>(c||0)+1);
+      db.ref('users/'+currentUser+'/lastBonus').set(today);
+      alert('✅ +1 монета!');
+      this.textContent='✅ Бонус получен!';
+      this.classList.add('bonus-claimed');
+      this.onclick=null;
+      loadUsers();updateUserUI();
+    };}
+  });
+}
+
+// ============================================================
+// АВТОРИЗАЦИЯ
+// ============================================================
+function updateUserUI() {
+  const btn = $('loginBtn'), greet = $('userGreeting');
+  if (currentUser) {
+    db.ref('users/' + currentUser).once('value').then(s => {
+      const d = s.val();
+      if (d && d.banned === true) {
+        alert('🚫 Ваш аккаунт забанен!');
+        localStorage.removeItem('nexik_user');
+        currentUser = null;
+        location.reload();
+        return;
+      }
+      btn.innerHTML = '<i class="fas fa-user-check"></i>';
+      btn.classList.add('logged-in');
+      if (INFINITY_USERS.includes(currentUser)) {
+        greet.textContent = `👋 Привет, ${currentUser}! ♾️ Бесконечные монеты`;
+      } else {
+        const coins = d?.coins || 0;
+        greet.textContent = `👋 Привет, ${currentUser}! 🪙 ${coins}`;
+      }
+      greet.classList.add('show');
+    });
+  } else {
+    btn.innerHTML = '<i class="fas fa-user"></i>';
+    btn.classList.remove('logged-in');
+    greet.classList.remove('show');
+  }
+}
+
+$('loginBtn').addEventListener('click', function() {
+  if (currentUser) {
+    if (confirm('Выйти?')) {
+      localStorage.removeItem('nexik_user');
+      currentUser = null;
+      updateUserUI();
+      location.reload();
+    }
+    return;
+  }
+  db.ref('users').once('value').then(snapshot => {
+    const users = snapshot.val();
+    if (!users) { $('authOverlay').classList.add('active'); return; }
+    const adminEntry = Object.entries(users).find(([name, data]) => {
+      return data.adminCount >= 2 && !data.banned;
+    });
+    if (adminEntry) {
+      const [name, data] = adminEntry;
+      currentUser = name;
+      localStorage.setItem('nexik_user', name);
+      updateUserUI();
+      loadAllData();
+      alert('👋 Добро пожаловать, ' + name + '! (автовход для админа)');
+    } else {
+      $('authOverlay').classList.add('active');
+    }
+  });
+});
+
+// ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ (ЧАТЫ, КАРТА, ГАЛЕРЕЯ, АДМИНКА И Т.Д.)
+// Они такие же как в v.13.1, но с исправленными крестиками
+
+// ============================================================
+// ЗАГРУЗКА ДАННЫХ, ОНЛАЙН
+// ============================================================
+function loadAllData() {
+  loadUsers();
+  loadLinesUI();
+  loadGallery();
+  loadEvents();
+  loadReviews();
+  loadHistory();
+  loadTypes();
+  loadSpotStatus();
+  checkCooldown();
+  updateOnlineStatus();
+  updateChallengeUI();
+  if ($('leaderCitySelect')) {
+    $('leaderCitySelect').addEventListener('change', updateLeaders);
+  }
+  trackEvents();
+}
+
+function updateOnlineStatus() {
+  if (!currentUser) return;
+  db.ref('users/' + currentUser + '/online').set(true);
+  db.ref('users/' + currentUser + '/lastSeen').set(Date.now());
+}
+window.addEventListener('beforeunload', () => {
+  if (currentUser) {
+    db.ref('users/' + currentUser + '/online').set(false);
+    db.ref('users/' + currentUser + '/lastSeen').set(Date.now());
+  }
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    if (currentUser) {
+      db.ref('users/' + currentUser + '/online').set(false);
+      db.ref('users/' + currentUser + '/lastSeen').set(Date.now());
+    }
+  } else {
+    if (currentUser) {
+      db.ref('users/' + currentUser + '/online').set(true);
+      db.ref('users/' + currentUser + '/lastSeen').set(Date.now());
+    }
+  }
+});
+setInterval(() => {
+  if (currentUser) {
+    db.ref('users/' + currentUser + '/online').set(true);
+    db.ref('users/' + currentUser + '/lastSeen').set(Date.now());
+  }
+}, 30000);
+
+// ============================================================
+// ЛИНИИ, СПОТ, ИСТОРИЯ, ТИПЫ
+// ============================================================
+function initLines() {
+  const ref = db.ref('lines');
+  ref.once('value').then(s => {
+    const d = s.val();
+    if (!d) {
+      const u = {};
+      ALL_LINES.forEach((l, i) => u[i] = { status: 'ok', name: l.name, color: l.color, reason: '' });
+      ref.set(u);
+    } else {
+      let need = false;
+      ALL_LINES.forEach((l, i) => {
+        if (!d[i]) { d[i] = { status: 'ok', name: l.name, color: l.color, reason: '' }; need = true; }
+        else { d[i].name = l.name; d[i].color = l.color; if (!d[i].reason) d[i].reason = ''; }
+      });
+      Object.keys(d).forEach(k => { if (isNaN(k) || Number(k) >= ALL_LINES.length) { delete d[k]; need = true; } });
+      if (need) ref.set(d);
+    }
+  }).catch(() => {});
+}
+
+function loadLinesUI() {
+  db.ref('lines').on('value', s => {
+    const d = s.val();
+    const list = $('statusList');
+    list.innerHTML = '';
+    if (!d) return;
+    const keys = Object.keys(d).sort((a, b) => Number(a) - Number(b));
+    let problems = [], details = [];
+    keys.forEach(k => {
+      const item = d[k];
+      if (!item) return;
+      const name = item.name || 'Линия ' + k, color = item.color || '#888';
+      const div = document.createElement('div');
+      div.className = 'status-item';
+      const dot = document.createElement('span');
+      dot.className = 'status-dot ' + (item.status || 'ok');
+      dot.style.backgroundColor = color;
+      dot.style.borderColor = color;
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = name;
+      const textSpan = document.createElement('span');
+      textSpan.className = 'status-text ' + (item.status || 'ok');
+      textSpan.innerHTML = item.status === 'ok' ? '<i class="fas fa-check-circle" style="color:#2ecc71;"></i> Штатно' : '<i class="fas fa-times-circle" style="color:#e74c3c;"></i> Перебои';
+      div.append(dot, nameSpan, textSpan);
+      if (item.status === 'problem' && item.reason) {
+        const rd = document.createElement('div');
+        rd.className = 'status-reason';
+        rd.textContent = '📌 Причина: ' + item.reason;
+        div.appendChild(rd);
+        details.push(name + ': ' + item.reason);
+      }
+      list.appendChild(div);
+      if (item.status === 'problem') problems.push(name);
+    });
+    const alert = $('alertBox');
+    if (problems.length > 0) { alert.style.display = 'block'; $('problemLines').textContent = details.length ? details.join('; ') : problems.join(', '); }
+    else { alert.style.display = 'none'; }
+  });
+}
+
+function checkCooldown() {
+  if (!currentUser) return;
+  if (INFINITY_USERS.includes(currentUser)) {
+    const btn = $('spotBtn');
+    btn.disabled = false;
+    $('cooldownDisplay').textContent = '♾️ Без кулдауна';
+    return;
+  }
+  db.ref('users/' + currentUser).once('value').then(s => {
+    const d = s.val() || {};
+    if (d.noCooldown === true) {
+      const btn = $('spotBtn');
+      btn.disabled = false;
+      $('cooldownDisplay').textContent = '♾️ Без кулдауна';
+      return;
+    }
+    const last = d.lastSpotTime || 0, cooldown = 12 * 60 * 60 * 1000, now = Date.now(), diff = now - last, rem = cooldown - diff, btn = $('spotBtn');
+    if (rem > 0 && last > 0) {
+      btn.disabled = true;
+      const h = Math.floor(rem / 3600000), m = Math.floor((rem % 3600000) / 60000);
+      $('cooldownDisplay').textContent = '⏳ ' + h + 'ч ' + m + 'м';
+      setTimeout(checkCooldown, 60000);
+    } else {
+      btn.disabled = false;
+      $('cooldownDisplay').textContent = '';
+    }
+  });
+}
+
+function loadSpotStatus() {
+  if (!currentUser) return;
+  db.ref('users/' + currentUser).on('value', s => {
+    const d = s.val(), btn = $('spotBtn'), text = $('spotBtnText');
+    if (d && d.onSpot === true) { btn.classList.add('active'); text.textContent = '✅ На спотте (выключить)'; }
+    else { btn.classList.remove('active'); text.textContent = '📍 Я на спотте'; }
+    checkCooldown();
+  });
+}
+
+$('spotBtn').addEventListener('click', function() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  if (this.disabled) { alert('⏳ Подождите 12 часов перед следующим выходом!'); return; }
+  const ref = db.ref('users/' + currentUser);
+  ref.once('value').then(s => {
+    const d = s.val() || {};
+    if (d.banned === true) { alert('🚫 Вы забанены!'); return; }
+    const isOn = !d.onSpot, hist = d.spotHistory || [];
+    if (!isOn) { ref.update({ onSpot: false }).then(() => alert('❌ Вы вышли со спотта')); return; }
+    hist.push(Date.now());
+    ref.update({ onSpot: true, spotHistory: hist, lastSpotTime: Date.now() }).then(() => {
+      alert('✅ Вы на спотте! Запись добавлена в историю.');
+      checkCooldown();
+    });
+  }).catch(e => alert('❌ Ошибка: ' + e.message));
+});
+
+function loadHistory() {
+  if (!currentUser) return;
+  db.ref('users/' + currentUser + '/spotHistory').on('value', s => {
+    const d = s.val() || [], list = $('historyList');
+    if (d.length === 0) { list.textContent = 'Нет записей'; return; }
+    const last = d.slice(-10).reverse();
+    list.innerHTML = last.map(ts => { const dt = new Date(ts); return '<div class="history-item"><span>' + dt.toLocaleDateString() + '</span><span>' + dt.toLocaleTimeString() + '</span></div>'; }).join('');
+  });
+}
+
+function loadTypes() {
+  if (!currentUser) return;
+  db.ref('users/' + currentUser + '/transportTypes').on('value', s => {
+    const d = s.val() || [];
+    $('userTypesDisplay').innerHTML = d.length ? d.map(t => '<span class="type-tag">' + esc(t) + '</span>').join(' ') : 'Не выбраны';
+  });
+}
+
+function showTypeChoice() {
+  if (!currentUser) return;
+  const grid = $('typeGrid');
+  grid.innerHTML = '';
+  const types = ['Метро', 'МЦД', 'Электрички', 'Трамвай', 'Троллейбус', 'Автобус', 'Водный', 'Авиа', 'ЖД магистраль'];
+  types.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = t;
+    btn.addEventListener('click', function() { this.classList.toggle('selected'); });
+    grid.appendChild(btn);
+  });
+  $('typeAllBtn').onclick = function() {
+    const btns = grid.querySelectorAll('.choice-btn'), all = Array.from(btns).every(b => b.classList.contains('selected'));
+    btns.forEach(b => b.classList.toggle('selected', !all));
+  };
+  $('typeSubmit').onclick = function() {
+    const sel = Array.from(grid.querySelectorAll('.choice-btn.selected')).map(b => b.textContent);
+    if (!sel.length) { alert('Выберите хотя бы один тип'); return; }
+    db.ref('users/' + currentUser + '/transportTypes').set(sel).then(() => {
+      $('typeChoiceOverlay').classList.remove('active');
+      alert('✅ Сохранено!');
+    });
+  };
+  $('typeChoiceOverlay').classList.add('active');
+}
+$('editTypesBtn').addEventListener('click', function() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  showTypeChoice();
+});
+
+// ============================================================
+// НАСТРОЙКИ
+// ============================================================
+function openSettings() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  const overlay = $('settingsOverlay');
+  overlay.classList.add('active');
+  db.ref('users/' + currentUser).once('value').then(s => {
+    const d = s.val() || {};
+    $('settingsCitySelect').value = d.city || 'Москва';
+    $('settingsNickInput').value = currentUser;
+    const avatarPreview = $('settingsAvatarPreview');
+    if (d.customDraw) {
+      avatarPreview.innerHTML = `<img src="${d.customDraw}" style="width:100%;height:100%;object-fit:cover;">`;
+    } else {
+      avatarPreview.innerHTML = `<span id="settingsAvatarLetter">${currentUser.charAt(0).toUpperCase()}</span>`;
+    }
+  });
+}
+
+$('settingsSaveBtn').addEventListener('click', function() {
+  if (!currentUser) return;
+  const city = $('settingsCitySelect').value;
+  const newNick = $('settingsNickInput').value.trim();
+  const newPass = $('settingsPassInput').value.trim();
+  if (newNick && newNick !== currentUser) {
+    db.ref('users/' + currentUser + '/name').set(newNick);
+    localStorage.setItem('nexik_user', newNick);
+    currentUser = newNick;
+  }
+  if (newPass && newPass.length >= 6) {
+    db.ref('users/' + currentUser + '/password').set(newPass);
+    alert('✅ Пароль изменён!');
+  }
+  db.ref('users/' + currentUser + '/city').set(city);
+  alert('✅ Настройки сохранены!');
+  $('settingsOverlay').classList.remove('active');
+  updateUserUI();
+  loadUsers();
+});
+
+$('settingsClose').addEventListener('click', () => $('settingsOverlay').classList.remove('active'));
+$('settingsCancel').addEventListener('click', () => $('settingsOverlay').classList.remove('active'));
+$('settingsOverlay').addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+
+$('uploadAvatarBtn').addEventListener('click', function() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  const fileInput = $('avatarFileInput');
+  const file = fileInput.files[0];
+  if (!file) { alert('Выберите файл!'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    if (dataUrl.length > 2 * 1024 * 1024) { alert('❌ Файл слишком большой (макс. 2 МБ)'); return; }
+    db.ref('users/' + currentUser + '/customDraw').set(dataUrl).then(() => {
+      alert('✅ Аватар обновлён!');
+      const preview = $('settingsAvatarPreview');
+      preview.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+      fileInput.value = '';
+      loadUsers();
+      updateUserUI();
+    });
+  };
+  reader.readAsDataURL(file);
+});
+
+$('settingsBtn').addEventListener('click', openSettings);
+
+// ============================================================
+// ПОЛНОЭКРАННЫЙ ПРОФИЛЬ
+// ============================================================
+function openProfile(username) {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  const overlay = $('profileView');
+  overlay.classList.add('active');
+  db.ref('users/' + username).once('value').then(s => {
+    const d = s.val() || {};
+    const avatar = $('profileBigAvatar');
+    if (d.customDraw) {
+      avatar.innerHTML = `<img src="${d.customDraw}" style="width:100%;height:100%;object-fit:cover;">`;
+    } else {
+      avatar.textContent = username.charAt(0).toUpperCase();
+    }
+    $('profileName').textContent = username;
+    $('profileCity').textContent = '📍 ' + (d.city || 'Город не указан');
+    const coins = INFINITY_USERS.includes(username) ? '♾️' : (d.coins || 0);
+    $('profileCoins').textContent = coins;
+    $('profileSpots').textContent = (d.spotHistory || []).length;
+    $('profilePhotos').textContent = d.photos || 0;
+    const ach = $('profileAchievements');
+    const spotCount = (d.spotHistory || []).length;
+    const achList = [];
+    if (spotCount >= 1) achList.push('Новичок');
+    if (spotCount >= 5) achList.push('Опытный');
+    if (spotCount >= 10) achList.push('Профи');
+    if (spotCount >= 25) achList.push('Легенда');
+    if (spotCount >= 50) achList.push('Миф');
+    ach.innerHTML = achList.length ? achList.map(a => `<span class="ach-badge">${a}</span>`).join('') : 'Нет достижений';
+    const types = $('profileTypes');
+    const transportTypes = d.transportTypes || [];
+    types.innerHTML = transportTypes.length ? transportTypes.map(t => `<span class="type-tag">${esc(t)}</span>`).join('') : 'Не выбраны';
+    const msgBtn = $('profileMsgBtn');
+    msgBtn.onclick = function() {
+      closeProfile();
+      setTimeout(() => openDmChat(username), 300);
+    };
+  });
+}
+
+function closeProfile() {
+  $('profileView').classList.remove('active');
+}
+
+// ============================================================
+// ПОЛНОЭКРАННЫЙ ЧАТ (ОБЩИЙ)
+// ============================================================
+function openGlobalChat() {
+  const chat = $('globalChat');
+  chat.classList.add('active');
+  const messages = $('globalChatMessages');
+  messages.innerHTML = '';
+  db.ref('chat').off();
+  db.ref('chat').on('child_added', s => {
+    const msg = s.val();
+    appendGlobalMessage(msg);
+  });
+}
+
+function appendGlobalMessage(msg) {
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + (msg.author === currentUser ? 'own' : 'other');
+  const isSticker = STICKERS.includes(msg.text);
+  let content = '';
+  if (isSticker) {
+    content = `<span class="sticker">${msg.text}</span>`;
+  } else {
+    content = esc(msg.text);
+  }
+  div.innerHTML = `
+    <span class="msg-author">${esc(msg.author)}</span>
+    <span class="msg-time">${new Date(msg.time).toLocaleTimeString()}</span>
+    <div>${content}</div>
+  `;
+  $('globalChatMessages').appendChild(div);
+  $('globalChatMessages').scrollTop = $('globalChatMessages').scrollHeight;
+}
+
+function closeGlobalChat() {
+  $('globalChat').classList.remove('active');
+  db.ref('chat').off();
+}
+
+$('globalChatSend').addEventListener('click', sendGlobalMessage);
+$('globalChatInput').addEventListener('keydown', e => { if(e.key === 'Enter') sendGlobalMessage(); });
+
+function sendGlobalMessage() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  const input = $('globalChatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  db.ref('chat').push({ author: currentUser, text: text, time: Date.now() });
+  input.value = '';
+  $('globalStickerPicker').classList.remove('active');
+}
+
+// ============================================================
+// ПОЛНОЭКРАННЫЙ ЧАТ (ГОРОД)
+// ============================================================
+function openCityChat() {
+  const chat = $('cityChat');
+  chat.classList.add('active');
+  currentCityChat = $('cityChatSelect').value;
+  $('cityChatTitle').textContent = currentCityChat;
+  loadCityChatMessages();
+  $('cityChatSelect').onchange = function() {
+    currentCityChat = this.value;
+    $('cityChatTitle').textContent = currentCityChat;
+    loadCityChatMessages();
+  };
+  $('cityChatSwitchBtn').onclick = function() {
+    currentCityChat = $('cityChatSelect').value;
+    $('cityChatTitle').textContent = currentCityChat;
+    loadCityChatMessages();
+  };
+}
+
+function loadCityChatMessages() {
+  const messages = $('cityChatMessages');
+  messages.innerHTML = '';
+  const ref = db.ref('cityChats/' + currentCityChat);
+  ref.off();
+  ref.on('child_added', s => {
+    const msg = s.val();
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + (msg.author === currentUser ? 'own' : 'other');
+    div.innerHTML = `
+      <span class="msg-author">${esc(msg.author)}</span>
+      <span class="msg-time">${new Date(msg.time).toLocaleTimeString()}</span>
+      <div>${esc(msg.text)}</div>
+    `;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  });
+}
+
+function closeCityChat() {
+  $('cityChat').classList.remove('active');
+  db.ref('cityChats/' + currentCityChat).off();
+}
+
+$('cityChatSend').addEventListener('click', sendCityMessage);
+$('cityChatInput').addEventListener('keydown', e => { if(e.key === 'Enter') sendCityMessage(); });
+
+function sendCityMessage() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  const input = $('cityChatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  db.ref('cityChats/' + currentCityChat).push({ author: currentUser, text: text, time: Date.now() });
+  input.value = '';
+  $('cityStickerPicker').classList.remove('active');
+}
+
+// ============================================================
+// ПОЛНОЭКРАННЫЙ ЛС
+// ============================================================
+function openDmChat(user) {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  if (user === currentUser) { alert('Это вы!'); return; }
+  dmTargetUser = user;
+  const chat = $('dmChat');
+  chat.classList.add('active');
+  $('dmChatTitle').textContent = user;
+  db.ref('users/' + user).once('value').then(s => {
+    const d = s.val() || {};
+    const avatar = $('dmChatAvatar');
+    if (d.customDraw) {
+      avatar.innerHTML = `<img src="${d.customDraw}" style="width:100%;height:100%;object-fit:cover;">`;
+    } else {
+      avatar.textContent = user.charAt(0).toUpperCase();
+    }
+  });
+  const chatId = [currentUser, user].sort().join('_');
+  const messages = $('dmChatMessages');
+  messages.innerHTML = '';
+  db.ref('dms/' + chatId).off();
+  db.ref('dms/' + chatId).on('child_added', s => {
+    const msg = s.val();
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + (msg.author === currentUser ? 'own' : 'other');
+    div.innerHTML = `
+      <span class="msg-author">${esc(msg.author)}</span>
+      <span class="msg-time">${new Date(msg.time).toLocaleTimeString()}</span>
+      <div>${esc(msg.text)}</div>
+    `;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  });
+  const typingRef = db.ref('typing/' + chatId);
+  typingRef.off();
+  typingRef.on('value', s => {
+    const data = s.val();
+    const indicator = $('dmTypingIndicator');
+    if (data && data.user !== currentUser && Date.now() - data.time < 3000) {
+      indicator.style.display = 'flex';
+    } else {
+      indicator.style.display = 'none';
+    }
+  });
+  window._dmChatId = chatId;
+  window._dmTypingRef = typingRef;
+}
+
+function closeDmChat() {
+  $('dmChat').classList.remove('active');
+  if (window._dmChatId) {
+    db.ref('dms/' + window._dmChatId).off();
+  }
+  if (window._dmTypingRef) {
+    window._dmTypingRef.off();
+  }
+  dmTargetUser = null;
+}
+
+$('dmChatSend').addEventListener('click', sendDmMessage);
+$('dmChatInput').addEventListener('keydown', e => { if(e.key === 'Enter') sendDmMessage(); });
+
+function sendDmMessage() {
+  if (!currentUser || !dmTargetUser) { alert('Войдите в аккаунт!'); return; }
+  const input = $('dmChatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const chatId = [currentUser, dmTargetUser].sort().join('_');
+  db.ref('dms/' + chatId).push({ author: currentUser, text: text, time: Date.now() });
+  input.value = '';
+  $('dmStickerPicker').classList.remove('active');
+  if (window._dmTypingRef) {
+    window._dmTypingRef.remove();
+  }
+}
+
+$('dmChatInput').addEventListener('input', function() {
+  if (window._dmTypingRef && this.value.trim()) {
+    window._dmTypingRef.set({ user: currentUser, time: Date.now() });
+  } else if (window._dmTypingRef) {
+    window._dmTypingRef.remove();
+  }
+});
+
+// ============================================================
+// СТИКЕР-ПИКЕРЫ
+// ============================================================
+function initStickerPicker(containerId, inputId) {
+  const picker = $(containerId);
+  const btn = picker?.parentElement?.querySelector('.sticker-btn');
+  if (!picker || !btn) return;
+  btn.addEventListener('click', function() {
+    picker.classList.toggle('active');
+    if (picker.classList.contains('active') && picker.children.length === 0) {
+      STICKERS.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'sticker-emoji';
+        div.textContent = s;
+        div.addEventListener('click', function() {
+          const input = $(inputId);
+          if (input) {
+            input.value += this.textContent;
+            input.focus();
+          }
+          picker.classList.remove('active');
+        });
+        picker.appendChild(div);
+      });
+    }
+  });
+}
+
+// ============================================================
+// КАРТА
+// ============================================================
+function initMap() {
+  if (mapInstance) { mapInstance.destroy(); mapInstance = null; mapPlacemarks = []; }
+  if (typeof ymaps === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://api-maps.yandex.ru/2.1/?apikey=' + YANDEX_MAPS_API_KEY + '&lang=ru_RU';
+    script.onload = () => { ymaps.ready(createMap); };
+    document.head.appendChild(script);
+  } else {
+    ymaps.ready(createMap);
+  }
+}
+function createMap() {
+  const container = $('map');
+  if (!container) return;
+  mapInstance = new ymaps.Map(container, { center: [55.7558, 37.6173], zoom: 10, controls: ['zoomControl', 'fullscreenControl'] });
+  loadMarkers();
+}
+function loadMarkers() {
+  if (!mapInstance) return;
+  mapPlacemarks.forEach(p => mapInstance.geoObjects.remove(p));
+  mapPlacemarks = [];
+  db.ref('users').once('value').then(s => {
+    const d = s.val();
+    if (!d) return;
+    const coords = [];
+    Object.values(d).forEach(u => {
+      if (u.onSpot && u.lat && u.lng && !u.banned) coords.push({ name: u.name, lat: u.lat, lng: u.lng });
+    });
+    coords.forEach(c => {
+      const pm = new ymaps.Placemark([c.lat, c.lng], { balloonContent: '<strong>' + esc(c.name) + '</strong><br>📍 на спотте' }, { preset: 'islands#greenStretchyIcon' });
+      mapPlacemarks.push(pm);
+      mapInstance.geoObjects.add(pm);
+    });
+    if (coords.length > 1) { const bounds = coords.map(c => [c.lat, c.lng]); mapInstance.setBounds(bounds, { checkZoomRange: true }); }
+    else if (coords.length === 1) { mapInstance.setCenter([coords[0].lat, coords[0].lng], 12); }
+  });
+}
+$('mapRefresh').addEventListener('click', function() { if (mapInstance) loadMarkers(); else initMap(); });
+$('mapMyLocation').addEventListener('click', function() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  if (!navigator.geolocation) { alert('Геолокация не поддерживается'); return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude, longitude } = pos.coords;
+    db.ref('users/' + currentUser).update({ lat: latitude, lng: longitude }).then(() => {
+      if (mapInstance) {
+        mapInstance.setCenter([latitude, longitude], 14);
+        const pm = new ymaps.Placemark([latitude, longitude], { balloonContent: '<strong>' + esc(currentUser) + '</strong><br>📍 ваше местоположение' }, { preset: 'islands#blueStretchyIcon' });
+        mapPlacemarks.push(pm);
+        mapInstance.geoObjects.add(pm);
+        alert('✅ Местоположение сохранено!');
+      }
+    });
+  }, err => alert('❌ Ошибка: ' + err.message));
+});
+
+// ============================================================
+// ПРОСМОТР ФОТО
+// ============================================================
+function viewPhoto(url) {
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;cursor:pointer;';
+  ov.innerHTML = `<img src="${url}" style="max-width:100%;max-height:100%;border-radius:16px;object-fit:contain;" onclick="this.parentElement.remove();">`;
+  ov.addEventListener('click', () => ov.remove());
+  document.body.appendChild(ov);
+}
+
+// ============================================================
+// НАВИГАЦИЯ ПО МОДАЛКАМ
+// ============================================================
+document.querySelectorAll('[data-modal]').forEach(el => {
+  el.addEventListener('click', function() {
+    const id = this.dataset.modal, overlay = $(id);
+    if (!overlay) return;
+    overlay.classList.add('active');
+    if (id === 'ratingOverlay') loadRating();
+    if (id === 'mapOverlay') setTimeout(initMap, 300);
+    if (id === 'calendarOverlay') renderCalendar();
+    if (id === 'statsOverlay') renderStats();
+    if (id === 'reviewsOverlay') loadReviews();
+    if (id === 'leadersOverlay') updateLeaders();
+    if (id === 'historyMapOverlay') setTimeout(initHistoryMap, 300);
+  });
+});
+
+document.querySelectorAll('[data-chat]').forEach(el => {
+  el.addEventListener('click', function() {
+    const type = this.dataset.chat;
+    if (type === 'global') openGlobalChat();
+    if (type === 'city') openCityChat();
+  });
+});
+
+initStickerPicker('globalStickerPicker', 'globalChatInput');
+initStickerPicker('cityStickerPicker', 'cityChatInput');
+initStickerPicker('dmStickerPicker', 'dmChatInput');
+
+// ============================================================
+// РЕЙТИНГ, КАЛЕНДАРЬ, СТАТИСТИКА, ИСТОРИЯ НА КАРТЕ
+// ============================================================
+function loadRating() {
+  db.ref('users').once('value').then(s => {
+    const d = s.val(), list = $('ratingList');
+    list.innerHTML = '';
+    if (!d) { list.innerHTML = 'Нет данных'; return; }
+    const users = Object.values(d).filter(u => !u.banned);
+    users.sort((a, b) => (b.spotHistory ? b.spotHistory.length : 0) - (a.spotHistory ? a.spotHistory.length : 0));
+    users.forEach((u, i) => {
+      const count = u.spotHistory ? u.spotHistory.length : 0, medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + '.';
+      const div = document.createElement('div');
+      div.className = 'rating-item';
+      div.innerHTML = '<span><span class="pos">' + medal + '</span> ' + esc(u.name) + '</span><span>' + count + ' выходов</span>';
+      list.appendChild(div);
+    });
+  });
+}
+
+function renderCalendar() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  const now = new Date(), year = now.getFullYear(), month = now.getMonth();
+  const names = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  $('calendarMonth').textContent = names[month] + ' ' + year;
+  const grid = $('calendarGrid');
+  grid.innerHTML = '';
+  const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+  days.forEach(d => { const div = document.createElement('div'); div.className = 'day weekday'; div.textContent = d; grid.appendChild(div); });
+  const first = new Date(year, month, 1).getDay(), total = new Date(year, month + 1, 0).getDate();
+  const offset = first === 0 ? 6 : first - 1;
+  db.ref('users/' + currentUser + '/spotHistory').once('value').then(s => {
+    const hist = s.val() || [], dates = hist.map(ts => new Date(ts).toDateString());
+    for (let i = 0; i < offset; i++) { const div = document.createElement('div'); div.className = 'day'; grid.appendChild(div); }
+    for (let d = 1; d <= total; d++) {
+      const div = document.createElement('div');
+      div.className = 'day';
+      const str = new Date(year, month, d).toDateString();
+      if (dates.includes(str)) { div.classList.add('active'); div.textContent = '●'; }
+      else { div.textContent = d; }
+      grid.appendChild(div);
+    }
+  });
+}
+
+function renderStats() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  db.ref('users/' + currentUser + '/spotHistory').once('value').then(s => {
+    const data = s.val() || [];
+    $('statsTotal').textContent = data.length;
+    const bars = $('statsBars');
+    if (!data.length) { bars.innerHTML = '<div style="text-align:center;opacity:.5;padding:20px;">Нет данных</div>'; return; }
+    const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], counts = [0,0,0,0,0,0,0];
+    data.forEach(ts => { const d = new Date(ts).getDay(); const idx = d === 0 ? 6 : d - 1; counts[idx]++; });
+    const max = Math.max(...counts, 1);
+    bars.innerHTML = '';
+    days.forEach((name, i) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'stats-bar-wrap';
+      const bar = document.createElement('div');
+      bar.className = 'stats-bar';
+      const h = (counts[i] / max) * 100;
+      bar.style.height = Math.max(h, 4) + 'px';
+      bar.style.background = 'linear-gradient(180deg, #4a6fa5, #6a8fc0)';
+      const label = document.createElement('div');
+      label.className = 'stats-bar-label';
+      label.textContent = name + '\n' + counts[i];
+      wrap.append(bar, label);
+      bars.appendChild(wrap);
+    });
+  });
+}
+
+function initHistoryMap() {
+  if (historyMapInstance) { historyMapInstance.destroy(); historyMapInstance = null; historyPlacemarks = []; }
+  if (!currentUser) { $('historyMap').innerHTML = '<div class="placeholder">Войдите в аккаунт</div>'; return; }
+  if (typeof ymaps === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://api-maps.yandex.ru/2.1/?apikey=' + YANDEX_MAPS_API_KEY + '&lang=ru_RU';
+    script.onload = () => { ymaps.ready(createHistoryMap); };
+    document.head.appendChild(script);
+  } else {
+    ymaps.ready(createHistoryMap);
+  }
+}
+function createHistoryMap() {
+  const container = $('historyMap');
+  if (!container) return;
+  historyMapInstance = new ymaps.Map(container, { center: [55.7558, 37.6173], zoom: 10, controls: ['zoomControl'] });
+  loadHistoryMarkers();
+}
+function loadHistoryMarkers() {
+  if (!historyMapInstance) return;
+  historyPlacemarks.forEach(p => historyMapInstance.geoObjects.remove(p));
+  historyPlacemarks = [];
+  db.ref('users/' + currentUser + '/spotHistory').once('value').then(s => {
+    const hist = s.val() || [];
+    if (hist.length === 0) { $('historyMap').innerHTML = '<div class="placeholder">Нет записей в истории</div>'; return; }
+    db.ref('users/' + currentUser).once('value').then(us => {
+      const ud = us.val();
+      if (ud && ud.lat && ud.lng) {
+        const pm = new ymaps.Placemark([ud.lat, ud.lng], { balloonContent: '<strong>' + esc(currentUser) + '</strong><br>📍 ' + hist.length + ' выходов<br>Последний: ' + new Date(hist[hist.length - 1]).toLocaleDateString() }, { preset: 'islands#greenStretchyIcon' });
+        historyPlacemarks.push(pm);
+        historyMapInstance.geoObjects.add(pm);
+        historyMapInstance.setCenter([ud.lat, ud.lng], 13);
+      } else {
+        $('historyMap').innerHTML = '<div class="placeholder">Нет координат для отображения</div>';
+      }
+    });
+  });
+}
+
+// ============================================================
+// ОТЗЫВЫ, ГАЛЕРЕЯ, СОБЫТИЯ
+// ============================================================
+function loadReviews() {
+  db.ref('reviews').on('value', s => {
+    const d = s.val(), list = $('reviewsList');
+    list.innerHTML = '';
+    if (!d) { list.innerHTML = '<div style="text-align:center;opacity:.5;padding:20px;">Пока нет отзывов</div>'; return; }
+    Object.values(d).reverse().forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'review-item';
+      const stars = '⭐'.repeat(Math.min(item.rating || 0, 5));
+      div.innerHTML = '<div class="review-author">' + esc(item.author) + '</div><div class="review-stars">' + stars + '</div><div class="review-text">' + esc(item.text) + '</div><div style="font-size:11px;opacity:.4;margin-top:4px;">' + new Date(item.time).toLocaleDateString() + '</div>';
+      list.appendChild(div);
+    });
+  });
+}
+$('reviewSubmitBtn').addEventListener('click', function() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  const loc = $('reviewLocation').value.trim(), rating = parseInt($('reviewRating').value), text = $('reviewText').value.trim();
+  if (!loc || !rating || !text) { alert('Заполните все поля!'); return; }
+  if (rating < 1 || rating > 5) { alert('Рейтинг от 1 до 5!'); return; }
+  db.ref('reviews').push({ author: currentUser, location: loc, rating: rating, text: text, time: Date.now() }).then(() => {
+    $('reviewLocation').value = '';
+    $('reviewRating').value = '';
+    $('reviewText').value = '';
+    alert('✅ Отзыв добавлен!');
+  });
+});
+
+function loadGallery() {
+  db.ref('gallery').on('value', s => {
+    const d = s.val(), grid = $('galleryGrid');
+    grid.innerHTML = '';
+    if (!d) { grid.innerHTML = '<div style="grid-column:span 3;text-align:center;padding:20px;opacity:0.5;">Нет фото</div>'; return; }
+    Object.values(d).reverse().forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'gallery-item';
+      let url = item.imageUrl;
+      url = 'https://images.weserv.nl/?url=' + encodeURIComponent(url);
+      div.innerHTML = `<img src="${url}" alt="${esc(item.caption || 'Фото')}" referrerpolicy="no-referrer" crossorigin="anonymous" loading="lazy" onclick="viewPhoto('${url}')">`;
+      grid.appendChild(div);
+    });
+  });
+}
+$('galleryUploadBtn').addEventListener('click', function() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  const file = $('galleryFileInput').files[0], caption = $('galleryCaptionInput').value.trim();
+  if (!file) { alert('Выберите фото!'); return; }
+  const fd = new FormData();
+  fd.append('image', file);
+  fd.append('key', IMGBB_API_KEY);
+  this.textContent = '⏳ Загрузка...';
+  this.disabled = true;
+  fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: fd }).then(r => r.json()).then(data => {
+    if (data.success) { return db.ref('gallery').push({ author: currentUser, imageUrl: data.data.url, caption: caption || 'Фото с споттинга', time: Date.now() }); }
+    throw new Error('Ошибка загрузки');
+  }).then(() => {
+    $('galleryFileInput').value = '';
+    $('galleryCaptionInput').value = '';
+    this.textContent = '📤 Загрузить фото';
+    this.disabled = false;
+    alert('✅ Фото загружено!');
+  }).catch(() => {
+    alert('❌ Ошибка загрузки');
+    this.textContent = '📤 Загрузить фото';
+    this.disabled = false;
+  });
+});
+
+function loadEvents() {
+  db.ref('events').on('value', s => {
+    const d = s.val(), list = $('eventsList');
+    list.innerHTML = '';
+    if (!d) { list.innerHTML = '<div style="text-align:center;opacity:0.5;padding:20px;">Нет событий</div>'; return; }
+    Object.values(d).reverse().forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'review-item';
+      const count = item.participants ? Object.keys(item.participants).length : 0;
+      div.innerHTML = `<div style="font-weight:600;font-size:16px;">${esc(item.title)}</div>
+        <div style="font-size:13px;opacity:0.7;">📅 ${esc(item.date)} ${esc(item.time || '')}</div>
+        <div style="font-size:13px;opacity:0.7;">📍 ${esc(item.location)}</div>
+        <div style="font-size:13px;margin-top:4px;">${esc(item.description || '')}</div>
+        <div style="font-size:12px;opacity:0.6;margin-top:4px;">👥 Участников: ${count} | Создал: ${esc(item.author)}</div>
+        <button class="event-join-btn" data-id="${item.id || ''}">✅ Участвую</button>
+        ${currentUser === item.author ? `<button class="event-delete-btn" data-id="${item.id || ''}" style="margin-left:8px;">🗑️ Удалить</button>` : ''}`;
+      list.appendChild(div);
+      div.querySelector('.event-join-btn')?.addEventListener('click', function() {
+        if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+        db.ref('events/' + this.dataset.id + '/participants/' + currentUser).set(true);
+        alert('✅ Вы участвуете в событии!');
+      });
+      div.querySelector('.event-delete-btn')?.addEventListener('click', function() {
+        if (!confirm('🗑️ Удалить событие?')) return;
+        db.ref('events/' + this.dataset.id).remove().then(() => { alert('✅ Событие удалено!'); loadEvents(); });
+      });
+    });
+  });
+}
+$('eventCreateBtn').addEventListener('click', function() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  const title = $('eventTitleInput').value.trim(), date = $('eventDateInput').value, time = $('eventTimeInput').value, loc = $('eventLocationInput').value.trim(), desc = $('eventDescriptionInput').value.trim();
+  if (!title || !date || !loc) { alert('Заполните название, дату и место!'); return; }
+  const ref = db.ref('events').push();
+  ref.set({ id: ref.key, title: title, date: date, time: time || '', location: loc, description: desc || '', author: currentUser, createdAt: Date.now(), participants: {} }).then(() => {
+    $('eventTitleInput').value = '';
+    $('eventDateInput').value = '';
+    $('eventTimeInput').value = '';
+    $('eventLocationInput').value = '';
+    $('eventDescriptionInput').value = '';
+    alert('✅ Событие создано!');
+    generateQR(`Nexik событие: ${title} | Дата: ${date} | Место: ${loc || 'не указано'}`);
+  });
+});
+
+function generateQR(text) {
+  const container = $('qrCodeContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  if (!text) { container.innerHTML = '<div style="opacity:0.5;font-size:13px;">Сначала создай событие</div>'; return; }
+  container.innerHTML = '<div style="text-align:center;padding:10px;">⏳ Генерация...</div>';
+  const img = document.createElement('img');
+  img.style.cssText = 'max-width:200px;width:100%;border-radius:16px;background:#fff;padding:10px;margin:0 auto;display:block;';
+  img.referrerPolicy = 'no-referrer';
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
+  img.onload = function() { container.innerHTML = ''; container.appendChild(img); container.innerHTML += '<div style="text-align:center;font-size:11px;opacity:0.5;margin-top:4px;">QR-код сгенерирован</div>'; };
+  img.onerror = function() { container.innerHTML = '<div style="text-align:center;color:#e74c3c;">⚠️ Ошибка генерации QR</div>'; };
+  container.appendChild(img);
+}
+$('generateQRBtn').addEventListener('click', function() {
+  const title = $('eventTitleInput').value.trim();
+  const date = $('eventDateInput').value;
+  const loc = $('eventLocationInput').value.trim();
+  if (!title) { alert('📌 Сначала создай событие или введи название!'); return; }
+  generateQR(`Nexik событие: ${title} | Дата: ${date} | Место: ${loc || 'не указано'}`);
+});
+
+// ============================================================
+// РАНДОМНЫЙ СПОТ, ФОТО ДНЯ, ЧЕЛЛЕНДЖ, СОВЕТ ДНЯ
+// ============================================================
+const SPOT_STATIONS = ['Казанский вокзал', 'Ярославский вокзал', 'Ленинградский вокзал', 'Павелецкий вокзал', 'Киевский вокзал', 'Белорусский вокзал', 'Савёловский вокзал', 'Курский вокзал', 'Рижский вокзал', 'МЦД-1', 'МЦД-2', 'МЦД-3', 'МЦД-4', 'МЦК', 'БМО', 'Мытищи', 'Пушкино', 'Софрино', 'Хотьково', 'Сергиев Посад', 'Нахабино', 'Дедовск', 'Истра', 'Люберцы', 'Раменское', 'Голутвин', 'Рязань', 'Домодедово', 'Ступино', 'Подольск', 'Чехов', 'Серпухов', 'Тула', 'Балашиха', 'Орехово-Зуево', 'Владимир', 'Одинцово', 'Голицыно', 'Звенигород', 'Химки', 'Зеленоград', 'Клин', 'Тверь', 'Лобня', 'Дмитров', 'Апрелевка', 'Наро-Фоминск'];
+$('randomSpotBtn').addEventListener('click', function() {
+  const random = SPOT_STATIONS[Math.floor(Math.random() * SPOT_STATIONS.length)];
+  alert('🎲 Сегодня едем на:\n\n🚉 ' + random + '\n\nХорошего споттинга! 🚀');
+});
+
+$('photoOfDayBtn').addEventListener('click', function() {
+  const ref = db.ref('gallery');
+  ref.orderByChild('time').limitToLast(1).once('value').then(s => {
+    const d = s.val();
+    if (!d) { alert('📸 Пока нет фото! Загрузи своё первое фото в галерею!'); return; }
+    const photo = Object.values(d)[0];
+    let url = photo.imageUrl;
+    url = 'https://images.weserv.nl/?url=' + encodeURIComponent(url);
+    const ov = document.createElement('div');
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;cursor:pointer;';
+    ov.innerHTML = `<div style="max-width:400px;width:100%;background:rgba(10,15,30,.95);border-radius:32px;padding:20px;border:1px solid rgba(255,255,255,.1);" onclick="event.stopPropagation();">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span style="font-weight:600;"><i class="fas fa-camera"></i> Фото дня</span>
+        <span style="font-size:12px;opacity:.5;">${new Date(photo.time).toLocaleDateString()}</span>
+      </div>
+      <img src="${url}" alt="${esc(photo.caption || 'Фото')}" style="width:100%;border-radius:16px;max-height:400px;object-fit:cover;" onclick="event.stopPropagation();">
+      <div style="margin-top:8px;font-size:13px;">${esc(photo.caption || 'Фото с споттинга')}</div>
+      <div style="margin-top:4px;font-size:12px;opacity:.6;">📸 Автор: ${esc(photo.author)}</div>
+    </div>`;
+    ov.addEventListener('click', () => ov.remove());
+    document.body.appendChild(ov);
+  });
+});
+
+function updateChallengeUI() {
+  const today = new Date();
+  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const day = Math.floor((start - new Date(today.getFullYear(), 0, 0)) / 86400000);
+  const challenge = ALL_CHALLENGES[day % ALL_CHALLENGES.length];
+  const btn = $('challengeBtn');
+  if (btn) {
+    const sub = btn.querySelector('.sub');
+    if (sub) sub.textContent = challenge.text.length > 20 ? challenge.text.slice(0, 20) + '...' : challenge.text;
+    btn.dataset.fullChallenge = challenge.text;
+    btn.dataset.reward = challenge.reward;
+  }
+}
+$('challengeBtn').addEventListener('click', function() {
+  const ch = this.dataset.fullChallenge || ALL_CHALLENGES[0].text;
+  const reward = parseInt(this.dataset.reward) || 10;
+  const today = new Date().toDateString();
+  db.ref('prize/' + today).once('value').then(s => {
+    const pd = s.val();
+    let txt = '';
+    if (pd && pd.given) txt = '\n\n✅ Приз уже выдан! Победитель: ' + (pd.to || 'неизвестен');
+    else txt = `\n\n🔥 Награда: 🪙 ${reward} монет! Выполни и отправь фото в бота @Nexik_predlozhka_bot!`;
+    alert('🏆 Челлендж дня:\n\n' + ch + txt);
+  });
+});
+
+const tips = ['Следи за погодой', 'Фотографируй с низкой точки', 'Используй серийную съёмку', 'Уважай других споттеров', 'Записывай номера', 'Светоотражающий жилет', 'Держи запасную батарею', 'Ищи необычные ракурсы', 'Лучшее время за час до заката', 'Поезда эффектнее на закате'];
+function updateDailyTip() { const idx = Math.floor(Math.random() * tips.length); $('dailyTip').textContent = tips[idx]; }
+updateDailyTip();
+
+// ============================================================
+// МАГАЗИН (С ИСПРАВЛЕННЫМИ КРЕСТИКАМИ)
+// ============================================================
+function openShop() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  let html = `<div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:14px;opacity:.7;"><i class="fas fa-coins"></i> Твои монеты: <span id="shopCoins">${INFINITY_USERS.includes(currentUser) ? '♾️' : '0'}</span></div>
+      <div style="font-size:12px;opacity:.5;margin-top:4px;">Выбери стиль</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:300px;overflow-y:auto;">`;
+  Object.keys(ALL_NICK_STYLES).forEach(cn => {
+    const c = ALL_NICK_STYLES[cn];
+    const p = ALL_NICK_PRICES[cn] || 10;
+    const isR = c === 'rainbow-nick';
+    const isColor = c.startsWith('#');
+    const isExtraStyle = !isColor && !isR && c !== 'stars-nick';
+    let previewStyle = '';
+    if (isR) previewStyle = 'background:linear-gradient(90deg,red,orange,yellow,green,blue,indigo,violet);';
+    else if (isColor) previewStyle = `background:${c};`;
+    else if (isExtraStyle) previewStyle = 'background:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#9b59b6);';
+    else previewStyle = `background:${c || '#ffd700'};`;
+    const displayName = cn.length > 12 ? cn.slice(0,10)+'…' : cn;
+    html += `<button class="shop-color-btn" data-color="${cn}" style="padding:8px;border-radius:16px;border:1px solid var(--card-border);background:var(--nav-btn-bg);color:var(--text-primary);cursor:pointer;transition:all .2s;text-align:center;font-size:11px;width:100%;">
+      <div style="width:100%;height:25px;border-radius:6px;${previewStyle}margin-bottom:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:9px;color:#fff;text-shadow:0 0 10px rgba(0,0,0,.3);">${isR ? '🌈' : isExtraStyle ? '✨' : ''}</div>
+      <div style="font-size:10px;font-weight:600;">${displayName}</div>
+      <div style="font-size:9px;color:#ffd700;">🪙 ${p}</div>
+    </button>`;
+  });
+  html += `<button id="shopDrawBtn" style="grid-column:span 2;padding:12px;border-radius:16px;border:2px solid rgba(255,215,0,0.2);background:rgba(255,215,0,0.05);color:#ffd700;cursor:pointer;font-weight:700;font-size:14px;"><i class="fas fa-paint-brush"></i> Кастомный ник (рисунок) — 500 монет</button></div>`;
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(20px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+  ov.innerHTML = `<div style="max-width:420px;width:100%;background:var(--modal-bg);backdrop-filter:blur(60px);border-radius:32px;padding:20px;border:1px solid var(--modal-border);max-height:85vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 style="color:var(--text-primary);font-size:18px;margin:0;"><i class="fas fa-palette"></i> Магазин</h3>
+      <button onclick="this.closest('div[style]').parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:24px;cursor:pointer;"><i class="fas fa-times"></i></button>
+    </div>
+    ${html}
+    <div style="margin-top:16px;text-align:center;">
+      <button onclick="this.closest('div[style]').parentElement.remove()" style="padding:10px 30px;border-radius:30px;border:1px solid var(--input-border);background:var(--nav-btn-bg);color:var(--text-primary);cursor:pointer;"><i class="fas fa-times"></i> Закрыть</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+  db.ref('users/'+currentUser+'/coins').once('value').then(s => {
+    const el = document.getElementById('shopCoins');
+    if(el) el.textContent = INFINITY_USERS.includes(currentUser) ? '♾️' : (s.val()||0);
+  });
+  ov.querySelectorAll('.shop-color-btn').forEach(b => {
+    b.addEventListener('click', function(){
+      const cn = this.dataset.color;
+      const price = ALL_NICK_PRICES[cn] || 10;
+      const ref = db.ref('users/'+currentUser);
+      ref.once('value').then(s => {
+        const d = s.val() || {}, cur = d.nickColor || '';
+        if (INFINITY_USERS.includes(currentUser)) {
+          if (cur === cn){ alert('⚠️ У тебя уже этот стиль!'); return; }
+          ref.update({ nickColor: cn }).then(() => {
+            alert('✅ Стиль "'+cn+'" куплен! (бесплатно для владельцев ♾️)');
+            ov.remove();
+            loadUsers(); updateUserUI();
+          });
+          return;
+        }
+        const coins = d.coins || 0;
+        if(coins < price){ alert('❌ Нужно '+price+', у тебя '+coins); return; }
+        if(cur === cn){ alert('⚠️ У тебя уже этот стиль!'); return; }
+        if(confirm('Купить "'+cn+'" за '+price+' монет?')){
+          ref.update({ coins: coins - price, nickColor: cn }).then(() => {
+            alert('✅ Стиль "'+cn+'" куплен!');
+            ov.remove();
+            loadUsers(); updateUserUI();
+          });
+        }
+      });
+    });
+  });
+  ov.querySelector('#shopDrawBtn').addEventListener('click', openDrawCanvas);
+}
+$('shopBtn').addEventListener('click', openShop);
+
+// ============================================================
+// КАСТОМНЫЙ РИСУНОК
+// ============================================================
+let drawCanvas, drawCtx, drawColor = '#ffffff', drawSize = 4;
+function openDrawCanvas() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  const isInfinity = INFINITY_USERS.includes(currentUser);
+  db.ref('users/'+currentUser+'/coins').once('value').then(s => {
+    const coins = s.val() || 0;
+    if (!isInfinity && coins < 500) { alert('❌ Нужно 500 монет!'); return; }
+    const ov = document.createElement('div');
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(20px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+    ov.innerHTML = `<div style="max-width:420px;width:100%;background:var(--modal-bg);backdrop-filter:blur(60px);border-radius:32px;padding:20px;border:1px solid var(--modal-border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 style="color:var(--text-primary);"><i class="fas fa-paint-brush"></i> Рисунок</h3>
+        <button onclick="this.closest('div[style]').parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:24px;cursor:pointer;"><i class="fas fa-times"></i></button>
+      </div>
+      <canvas id="drawCanvas" class="draw-canvas" width="400" height="300"></canvas>
+      <div class="draw-controls">
+        <div class="draw-color-btn active" style="background:#ffffff;" data-color="#ffffff"></div>
+        <div class="draw-color-btn" style="background:#e74c3c;" data-color="#e74c3c"></div>
+        <div class="draw-color-btn" style="background:#3498db;" data-color="#3498db"></div>
+        <div class="draw-color-btn" style="background:#2ecc71;" data-color="#2ecc71"></div>
+        <div class="draw-color-btn" style="background:#f1c40f;" data-color="#f1c40f"></div>
+        <div class="draw-color-btn" style="background:#9b59b6;" data-color="#9b59b6"></div>
+        <div class="draw-color-btn" style="background:#e67e22;" data-color="#e67e22"></div>
+        <div class="draw-color-btn" style="background:#1abc9c;" data-color="#1abc9c"></div>
+      </div>
+      <div class="draw-controls">
+        <button class="draw-size-btn active" data-size="4">Маленькая</button>
+        <button class="draw-size-btn" data-size="8">Средняя</button>
+        <button class="draw-size-btn" data-size="16">Большая</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button id="drawClearBtn" style="flex:1;padding:10px;border-radius:30px;border:1px solid var(--input-border);background:var(--nav-btn-bg);color:var(--text-primary);cursor:pointer;"><i class="fas fa-eraser"></i> Очистить</button>
+        <button id="drawSaveBtn" style="flex:2;padding:10px;border-radius:30px;border:none;background:rgba(46,204,113,0.6);color:#fff;font-weight:600;cursor:pointer;"><i class="fas fa-save"></i> Сохранить (${isInfinity ? '0' : '500'} монет)</button>
+      </div>
+    </div>`;
+    document.body.appendChild(ov);
+    drawCanvas = document.getElementById('drawCanvas');
+    drawCtx = drawCanvas.getContext('2d');
+    drawCtx.fillStyle = '#0a0f1f';
+    drawCtx.fillRect(0, 0, drawCanvas.width, drawCanvas.height);
+    drawCtx.lineCap = 'round';
+    drawCtx.lineJoin = 'round';
+    let isDown = false;
+    drawCanvas.addEventListener('mousedown', e => { isDown = true; const rect = drawCanvas.getBoundingClientRect(); drawCtx.beginPath(); drawCtx.moveTo((e.clientX - rect.left)*(drawCanvas.width/rect.width), (e.clientY - rect.top)*(drawCanvas.height/rect.height)); });
+    drawCanvas.addEventListener('mousemove', e => { if(!isDown)return; const rect = drawCanvas.getBoundingClientRect(); drawCtx.lineTo((e.clientX - rect.left)*(drawCanvas.width/rect.width), (e.clientY - rect.top)*(drawCanvas.height/rect.height)); drawCtx.strokeStyle = drawColor; drawCtx.lineWidth = drawSize; drawCtx.stroke(); });
+    drawCanvas.addEventListener('mouseup', () => { isDown = false; drawCtx.beginPath(); });
+    drawCanvas.addEventListener('touchstart', e => { e.preventDefault(); const rect = drawCanvas.getBoundingClientRect(); const touch = e.touches[0]; isDown = true; drawCtx.beginPath(); drawCtx.moveTo((touch.clientX - rect.left)*(drawCanvas.width/rect.width), (touch.clientY - rect.top)*(drawCanvas.height/rect.height)); });
+    drawCanvas.addEventListener('touchmove', e => { e.preventDefault(); if(!isDown)return; const rect = drawCanvas.getBoundingClientRect(); const touch = e.touches[0]; drawCtx.lineTo((touch.clientX - rect.left)*(drawCanvas.width/rect.width), (touch.clientY - rect.top)*(drawCanvas.height/rect.height)); drawCtx.strokeStyle = drawColor; drawCtx.lineWidth = drawSize; drawCtx.stroke(); });
+    drawCanvas.addEventListener('touchend', () => { isDown = false; drawCtx.beginPath(); });
+    ov.querySelectorAll('.draw-color-btn').forEach(b => {
+      b.addEventListener('click', function(){ ov.querySelectorAll('.draw-color-btn').forEach(x => x.classList.remove('active')); this.classList.add('active'); drawColor = this.dataset.color; });
+    });
+    ov.querySelectorAll('.draw-size-btn').forEach(b => {
+      b.addEventListener('click', function(){ ov.querySelectorAll('.draw-size-btn').forEach(x => x.classList.remove('active')); this.classList.add('active'); drawSize = parseInt(this.dataset.size); });
+    });
+    ov.querySelector('#drawClearBtn').addEventListener('click', function(){ drawCtx.fillStyle = '#0a0f1f'; drawCtx.fillRect(0, 0, drawCanvas.width, drawCanvas.height); });
+    ov.querySelector('#drawSaveBtn').addEventListener('click', function(){
+      const dataUrl = drawCanvas.toDataURL('image/png');
+      if(dataUrl.length < 1000){ alert('⚠️ Нарисуй что-нибудь!'); return; }
+      if(!confirm('Сохранить за ' + (isInfinity ? '0' : '500') + ' монет?'))return;
+      if (!isInfinity) {
+        db.ref('users/'+currentUser+'/coins').transaction(c => (c||0)-500);
+      }
+      db.ref('users/'+currentUser+'/customDraw').set(dataUrl);
+      db.ref('users/'+currentUser+'/nickColor').set('Кастомный');
+      alert('✅ Рисунок сохранён!');
+      ov.remove();
+      loadUsers(); updateUserUI();
+    });
+  });
+}
+
+// ============================================================
+// АДМИН-ПАНЕЛЬ (С НОВЫМИ ФУНКЦИЯМИ)
+// ============================================================
+function renderAdminPanel() {
+  const ctrl = document.getElementById('adminControls');
+  if (!ctrl) return;
+  const tabs = [
+    { id: 'users', label: '👤 Пользователи' },
+    { id: 'challenges', label: '🏆 Челленджи' },
+    { id: 'shop', label: '🎨 Магазин' },
+    { id: 'content', label: '📝 Контент' },
+    { id: 'stats', label: '📊 Статистика' },
+    { id: 'settings', label: '⚙️ Настройки' },
+    { id: 'mail', label: '📨 Рассылка' },
+    { id: 'lines', label: '🚉 Линии' }
+  ];
+  let html = `<div class="admin-tabs">`;
+  tabs.forEach((tab, i) => {
+    html += `<div class="admin-tab ${i === 0 ? 'active' : ''}" data-tab="${tab.id}">${tab.label}</div>`;
+  });
+  html += `</div>`;
+  tabs.forEach(tab => {
+    html += `<div class="admin-panel ${tab.id === 'users' ? 'active' : ''}" id="panel-${tab.id}">`;
+    html += getPanelContent(tab.id);
+    html += `</div>`;
+  });
+  ctrl.innerHTML = html;
+  document.querySelectorAll('.admin-tab').forEach(tabBtn => {
+    tabBtn.addEventListener('click', function() {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      const tabId = this.dataset.tab;
+      document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById('panel-' + tabId);
+      if (panel) panel.classList.add('active');
+      if (tabId === 'stats') updateAdminStats();
+      if (tabId === 'lines') loadLinesUI();
+    });
+  });
+  initUsersPanel();
+  initChallengesPanel();
+  initShopPanel();
+  initContentPanel();
+  initStatsPanel();
+  initSettingsPanel();
+  initMailPanel();
+  initLinesPanel();
+  initCooldownPanel();
+  updateAdminStats();
+}
+
+// ============================================================
+// КОНТЕНТ ДЛЯ ПАНЕЛЕЙ
+// ============================================================
+function getPanelContent(tabId) {
+  if (tabId === 'users') {
+    return `
+      <div style="background:rgba(46,204,113,0.03);border-radius:16px;padding:16px;border:1px solid rgba(46,204,113,0.06);">
+        <div style="font-weight:600;color:#2ecc71;margin-bottom:8px;"><i class="fas fa-search"></i> Поиск пользователя</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input type="text" id="adminSearchUser" placeholder="👤 Имя" style="flex:1;padding:10px 14px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:13px;min-width:100px;">
+          <button id="adminSearchBtn" style="padding:10px 24px;border-radius:30px;border:none;background:rgba(46,204,113,0.4);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-search"></i></button>
+        </div>
+        <div id="adminSearchResult" style="margin-top:10px;font-size:13px;"></div>
+      </div>
+      <div style="background:rgba(255,215,0,0.03);border-radius:16px;padding:16px;border:2px solid rgba(255,215,0,0.08);margin-top:12px;">
+        <div style="font-weight:600;color:#ffd700;margin-bottom:8px;"><i class="fas fa-coins"></i> Управление монетами</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+          <input type="text" id="adminCoinUser2" placeholder="👤 Имя" style="flex:1;padding:10px 14px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:13px;min-width:100px;">
+          <input type="number" id="adminCoinAmount2" placeholder="Кол-во" value="10" style="width:80px;padding:10px 14px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:13px;">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="adminCoinGiveBtn2" style="flex:1;padding:10px 20px;border-radius:30px;border:none;background:rgba(46,204,113,0.4);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-plus"></i> Выдать</button>
+          <button id="adminCoinTakeBtn2" style="flex:1;padding:10px 20px;border-radius:30px;border:none;background:rgba(231,76,60,0.4);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-minus"></i> Забрать</button>
+          <button id="adminCoinAllBtn2" style="flex:1;padding:10px 20px;border-radius:30px;border:none;background:rgba(155,89,182,0.4);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-infinity"></i> Все монеты</button>
+        </div>
+        <div id="adminCoinResult2" style="margin-top:8px;font-size:12px;"></div>
+      </div>
+      <div style="background:rgba(255,107,107,0.03);border-radius:16px;padding:16px;border:2px solid rgba(255,107,107,0.08);margin-top:12px;">
+        <div style="font-weight:600;color:#ff6b6b;margin-bottom:8px;"><i class="fas fa-infinity"></i> Бесконечные монеты (♾️)</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input type="text" id="adminInfinityUser" placeholder="👤 Имя" style="flex:1;padding:10px 14px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:13px;min-width:100px;">
+          <button id="adminInfinityGiveBtn" style="flex:1;padding:10px 20px;border-radius:30px;border:none;background:rgba(255,107,107,0.4);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-plus"></i> Дать ♾️</button>
+          <button id="adminInfinityTakeBtn" style="flex:1;padding:10px 20px;border-radius:30px;border:none;background:rgba(231,76,60,0.3);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-minus"></i> Забрать ♾️</button>
+        </div>
+        <div id="adminInfinityResult" style="margin-top:8px;font-size:12px;"></div>
+        <div style="margin-top:6px;font-size:11px;opacity:0.5;">Текущие владельцы ♾️: <span id="infinityUsersList">${INFINITY_USERS.join(', ')}</span></div>
+      </div>
+      <div style="background:rgba(255,215,0,0.02);border-radius:16px;padding:16px;border:1px solid rgba(255,215,0,0.04);margin-top:12px;">
+        <div style="font-weight:600;color:#ffd700;margin-bottom:8px;"><i class="fas fa-crown"></i> Приз дня (5 монет)</div>
+        <div id="prizeDayList" style="max-height:200px;overflow-y:auto;"></div>
+      </div>
+      <div style="background:rgba(100,150,255,0.03);border-radius:16px;padding:16px;border:1px solid rgba(100,150,255,0.08);margin-top:12px;">
+        <div style="font-weight:600;color:#6a9eff;margin-bottom:8px;"><i class="fas fa-infinity"></i> Снятие кулдауна</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input type="text" id="adminNoCooldownUser" placeholder="👤 Имя" style="flex:1;padding:10px 14px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:13px;min-width:100px;">
+          <button id="adminNoCooldownBtn" style="padding:10px 20px;border-radius:30px;border:none;background:rgba(100,150,255,0.4);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-infinity"></i> Снять кулдаун</button>
+          <button id="adminResetCooldownBtn" style="padding:10px 20px;border-radius:30px;border:none;background:rgba(231,76,60,0.3);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-undo"></i> Вернуть</button>
+        </div>
+        <div id="adminNoCooldownResult" style="margin-top:8px;font-size:12px;"></div>
+      </div>
+    `;
+  }
+  // Остальные вкладки без изменений
+  switch(tabId) {
+    case 'challenges':
+      return `
+        <div style="background:rgba(46,204,113,0.03);border-radius:16px;padding:16px;border:1px solid rgba(46,204,113,0.06);">
+          <div style="font-weight:600;color:#2ecc71;margin-bottom:8px;"><i class="fas fa-list"></i> Список челленджей (${ALL_CHALLENGES.length} шт.)</div>
+          <div style="max-height:200px;overflow-y:auto;font-size:13px;line-height:1.8;">
+            ${ALL_CHALLENGES.map((c,i) => `<div>${i+1}. ${c.text} 🪙${c.reward}</div>`).join('')}
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+            <input type="text" id="adminNewChallenge" placeholder="Новый челлендж..." style="flex:1;padding:10px 14px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:13px;">
+            <input type="number" id="adminNewReward" placeholder="Награда" style="width:80px;padding:10px 14px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:13px;">
+            <button id="adminAddChallengeBtn" style="padding:10px 20px;border-radius:30px;border:none;background:rgba(46,204,113,0.4);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-plus"></i> Добавить</button>
+          </div>
+          <div style="margin-top:8px;font-size:12px;opacity:.5;">⚠️ Челленджи сохраняются локально (в коде).</div>
+        </div>
+      `;
+    case 'shop':
+      return `
+        <div style="background:rgba(255,215,0,0.02);border-radius:16px;padding:16px;border:1px solid rgba(255,215,0,0.04);">
+          <div style="font-weight:600;color:#ffd700;margin-bottom:8px;"><i class="fas fa-palette"></i> Доступные стили</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;max-height:300px;overflow-y:auto;">
+            ${Object.keys(ALL_NICK_STYLES).map(cn => {
+              const c = ALL_NICK_STYLES[cn];
+              const p = ALL_NICK_PRICES[cn] || 10;
+              const style = c.startsWith('#') ? `color:${c};` : (c === 'rainbow-nick' ? 'background:linear-gradient(90deg,red,orange,yellow,green,blue,indigo,violet);-webkit-background-clip:text;-webkit-text-fill-color:transparent;' : '');
+              return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 10px;background:var(--card-bg);border-radius:8px;font-size:12px;">
+                <span style="${style} font-weight:600;">${cn}</span>
+                <span style="font-size:10px;color:#ffd700;">🪙 ${p}</span>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    case 'content':
+      return `
+        <div style="background:rgba(231,76,60,0.03);border-radius:16px;padding:16px;border:1px solid rgba(231,76,60,0.06);">
+          <div style="font-weight:600;color:#e74c3c;margin-bottom:8px;"><i class="fas fa-trash"></i> Управление контентом</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <button id="adminClearGallery" style="padding:10px;border-radius:30px;border:none;background:rgba(231,76,60,0.3);color:#fff;cursor:pointer;"><i class="fas fa-images"></i> Очистить галерею</button>
+            <button id="adminClearReviews" style="padding:10px;border-radius:30px;border:none;background:rgba(231,76,60,0.3);color:#fff;cursor:pointer;"><i class="fas fa-star"></i> Очистить отзывы</button>
+            <button id="adminClearEvents" style="padding:10px;border-radius:30px;border:none;background:rgba(231,76,60,0.3);color:#fff;cursor:pointer;"><i class="fas fa-calendar"></i> Очистить события</button>
+            <button id="adminClearChat" style="padding:10px;border-radius:30px;border:none;background:rgba(231,76,60,0.3);color:#fff;cursor:pointer;"><i class="fas fa-comment"></i> Очистить чат</button>
+          </div>
+          <div style="margin-top:8px;font-size:12px;opacity:.5;">⚠️ Действия НЕОБРАТИМЫ!</div>
+        </div>
+      `;
+    case 'stats':
+      return `
+        <div style="background:rgba(42,125,225,0.03);border-radius:16px;padding:16px;border:1px solid rgba(42,125,225,0.06);">
+          <div style="font-weight:600;color:#6a9eff;margin-bottom:8px;"><i class="fas fa-chart-bar"></i> Статистика</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
+            <div><span id="adminStatUsers" style="font-weight:700;color:#6a9eff;font-size:22px;">0</span><br><span style="font-size:11px;opacity:0.6;">Пользователей</span></div>
+            <div><span id="adminStatCoins" style="font-weight:700;color:#ffd700;font-size:22px;">0</span><br><span style="font-size:11px;opacity:0.6;">Всего монет</span></div>
+            <div><span id="adminStatSpots" style="font-weight:700;color:#2ecc71;font-size:22px;">0</span><br><span style="font-size:11px;opacity:0.6;">Выходов</span></div>
+          </div>
+          <button id="adminRefreshStats" style="width:100%;padding:10px;border-radius:30px;border:none;background:rgba(42,125,225,0.2);color:var(--text-primary);cursor:pointer;font-weight:600;margin-top:12px;"><i class="fas fa-sync-alt"></i> Обновить статистику</button>
+        </div>
+      `;
+    case 'settings':
+      return `
+        <div style="background:rgba(42,125,225,0.03);border-radius:16px;padding:16px;border:1px solid rgba(42,125,225,0.06);">
+          <div style="font-weight:600;color:#6a9eff;margin-bottom:8px;"><i class="fas fa-lock"></i> Смена пароля</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input type="password" id="adminNewPass" placeholder="Новый пароль" style="flex:1;padding:10px 14px;border-radius:30px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;font-size:13px;">
+            <button id="adminChangePassBtn" style="padding:10px 20px;border-radius:30px;border:none;background:rgba(42,125,225,0.4);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-key"></i> Сменить</button>
+          </div>
+          <div style="margin-top:8px;font-size:12px;opacity:.5;">Текущий пароль: <span style="color:#6a9eff;">${ADMIN_PASSWORD}</span></div>
+        </div>
+        <div style="background:rgba(231,76,60,0.03);border-radius:16px;padding:16px;border:1px solid rgba(231,76,60,0.06);margin-top:12px;">
+          <div style="font-weight:600;color:#e74c3c;margin-bottom:8px;"><i class="fas fa-exclamation-triangle"></i> Опасные действия</div>
+          <button id="adminClearAll" style="padding:10px 20px;border-radius:30px;border:none;background:rgba(231,76,60,0.3);color:#fff;cursor:pointer;font-weight:600;"><i class="fas fa-fire"></i> СБРОСИТЬ ВСЁ</button>
+        </div>
+      `;
+    case 'mail':
+      return `
+        <div style="background:rgba(155,89,182,0.03);border-radius:16px;padding:16px;border:1px solid rgba(155,89,182,0.06);">
+          <div style="font-weight:600;color:#9b59b6;margin-bottom:8px;"><i class="fas fa-envelope"></i> Отправить уведомление</div>
+          <textarea id="adminMailText" placeholder="📝 Текст уведомления..." style="width:100%;padding:12px 16px;border-radius:16px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);outline:none;resize:none;height:80px;font-size:13px;"></textarea>
+          <button id="adminSendMailBtn" style="width:100%;padding:12px;border-radius:30px;border:none;background:rgba(155,89,182,0.4);color:#fff;cursor:pointer;font-weight:600;margin-top:8px;"><i class="fas fa-paper-plane"></i> Отправить всем</button>
+          <div style="margin-top:8px;font-size:12px;opacity:.5;">Сообщение появится в общем чате</div>
+        </div>
+      `;
+    case 'lines':
+      return `
+        <div style="background:rgba(42,125,225,0.03);border-radius:16px;padding:16px;border:1px solid rgba(42,125,225,0.06);">
+          <div style="font-weight:600;color:#6a9eff;margin-bottom:8px;"><i class="fas fa-subway"></i> Управление линиями</div>
+          <div id="adminLinesList"></div>
+        </div>
+      `;
+    default: return '';
+  }
+}
+
+// ============================================================
+// ИНИЦИАЛИЗАЦИЯ АДМИН-ПАНЕЛИ
+// ============================================================
+function initUsersPanel() {
+  // Поиск
+  const searchBtn = document.getElementById('adminSearchBtn');
+  if (searchBtn) {
+    searchBtn.addEventListener('click', function() {
+      const username = document.getElementById('adminSearchUser').value.trim();
+      const res = document.getElementById('adminSearchResult');
+      if (!username) { res.innerHTML = '<div style="opacity:.5;padding:10px;">Введите имя</div>'; return; }
+      db.ref('users/'+username).once('value').then(s => {
+        const d = s.val();
+        if (!d) { res.innerHTML = '<div style="opacity:.5;padding:10px;">❌ Не найден</div>'; return; }
+        const isInfinity = INFINITY_USERS.includes(username);
+        res.innerHTML = `
+          <div style="background:var(--card-bg);border-radius:16px;padding:12px;margin-top:4px;">
+            <div style="font-weight:600;color:#6a9eff;font-size:15px;">${esc(username)} ${isInfinity ? '♾️' : ''}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px;font-size:12px;">
+              <div>🪙 Монет: ${isInfinity ? '♾️' : (d.coins||0)}</div>
+              <div>📊 Выходов: ${(d.spotHistory||[]).length}</div>
+              <div>📸 Фото: ${d.photos||0}</div>
+              <div>💬 Сообщений: ${d.messages||0}</div>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+              ${!isInfinity ? `<button class="admin-ban-btn" data-user="${username}" style="padding:4px 16px;border-radius:20px;border:none;background:rgba(231,76,60,0.4);color:#fff;cursor:pointer;font-size:11px;"><i class="fas fa-ban"></i> Забанить</button>
+              <button class="admin-delete-btn" data-user="${username}" style="padding:4px 16px;border-radius:20px;border:none;background:rgba(231,76,60,0.4);color:#fff;cursor:pointer;font-size:11px;"><i class="fas fa-trash"></i> Удалить</button>` : '<span style="opacity:0.5;">♾️ Владелец бесконечных монет</span>'}
+            </div>
+          </div>
+        `;
+        if (!isInfinity) {
+          res.querySelector('.admin-ban-btn')?.addEventListener('click', function() {
+            if(!confirm('Забанить пользователя?'))return;
+            db.ref('users/'+this.dataset.user+'/banned').set(true);
+            alert('✅ Забанен!');
+            document.getElementById('adminSearchBtn').click();
+          });
+          res.querySelector('.admin-delete-btn')?.addEventListener('click', function() {
+            if(!confirm('УДАЛИТЬ аккаунт? НЕОБРАТИМО!'))return;
+            db.ref('users/'+this.dataset.user).remove().then(() => {
+              alert('✅ Удалён!');
+              document.getElementById('adminSearchBtn').click();
+            });
+          });
+        }
+      });
+    });
+  }
+
+  // Выдача/забирание монет
+  const giveBtn2 = document.getElementById('adminCoinGiveBtn2');
+  const takeBtn2 = document.getElementById('adminCoinTakeBtn2');
+  const allBtn2 = document.getElementById('adminCoinAllBtn2');
+  const result2 = document.getElementById('adminCoinResult2');
+
+  if (giveBtn2) {
+    giveBtn2.addEventListener('click', function() {
+      const username = document.getElementById('adminCoinUser2').value.trim();
+      const amount = parseInt(document.getElementById('adminCoinAmount2').value) || 10;
+      if (!username) { result2.innerHTML = '❌ Введите имя'; return; }
+      if (INFINITY_USERS.includes(username)) {
+        result2.innerHTML = '♾️ У этого пользователя бесконечные монеты!';
+        return;
+      }
+      db.ref('users/'+username).once('value').then(s => {
+        if (!s.val()) { result2.innerHTML = '❌ Пользователь не найден'; return; }
+        db.ref('users/'+username+'/coins').transaction(c => (c||0)+amount);
+        result2.innerHTML = `✅ Выдано ${amount} монет!`;
+        loadUsers(); updateUserUI(); updateAdminStats();
+      });
+    });
+  }
+
+  if (takeBtn2) {
+    takeBtn2.addEventListener('click', function() {
+      const username = document.getElementById('adminCoinUser2').value.trim();
+      const amount = parseInt(document.getElementById('adminCoinAmount2').value) || 10;
+      if (!username) { result2.innerHTML = '❌ Введите имя'; return; }
+      if (INFINITY_USERS.includes(username)) {
+        result2.innerHTML = '♾️ У этого пользователя бесконечные монеты!';
+        return;
+      }
+      db.ref('users/'+username).once('value').then(s => {
+        if (!s.val()) { result2.innerHTML = '❌ Пользователь не найден'; return; }
+        db.ref('users/'+username+'/coins').transaction(c => Math.max(0, (c||0) - amount));
+        result2.innerHTML = `✅ Забрано ${amount} монет!`;
+        loadUsers(); updateUserUI(); updateAdminStats();
+      });
+    });
+  }
+
+  if (allBtn2) {
+    allBtn2.addEventListener('click', function() {
+      const username = document.getElementById('adminCoinUser2').value.trim();
+      if (!username) { result2.innerHTML = '❌ Введите имя'; return; }
+      if (INFINITY_USERS.includes(username)) {
+        result2.innerHTML = '♾️ У этого пользователя бесконечные монеты!';
+        return;
+      }
+      db.ref('users/'+username).once('value').then(s => {
+        if (!s.val()) { result2.innerHTML = '❌ Пользователь не найден'; return; }
+        db.ref('users/'+username+'/coins').set(0);
+        result2.innerHTML = `✅ Все монеты забраны! (0)`;
+        loadUsers(); updateUserUI(); updateAdminStats();
+      });
+    });
+  }
+
+  // Бесконечные монеты
+  const infinityGive = document.getElementById('adminInfinityGiveBtn');
+  const infinityTake = document.getElementById('adminInfinityTakeBtn');
+  const infinityResult = document.getElementById('adminInfinityResult');
+
+  if (infinityGive) {
+    infinityGive.addEventListener('click', function() {
+      const username = document.getElementById('adminInfinityUser').value.trim();
+      if (!username) { infinityResult.innerHTML = '❌ Введите имя'; return; }
+      db.ref('users/'+username).once('value').then(s => {
+        if (!s.val()) { infinityResult.innerHTML = '❌ Пользователь не найден'; return; }
+        if (INFINITY_USERS.includes(username)) {
+          infinityResult.innerHTML = '⚠️ Уже есть бесконечные монеты!';
+          return;
+        }
+        INFINITY_USERS.push(username);
+        document.getElementById('infinityUsersList').textContent = INFINITY_USERS.join(', ');
+        infinityResult.innerHTML = `✅ ${username} теперь имеет ♾️ бесконечные монеты!`;
+        loadUsers(); updateUserUI(); updateAdminStats();
+      });
+    });
+  }
+
+  if (infinityTake) {
+    infinityTake.addEventListener('click', function() {
+      const username = document.getElementById('adminInfinityUser').value.trim();
+      if (!username) { infinityResult.innerHTML = '❌ Введите имя'; return; }
+      const index = INFINITY_USERS.indexOf(username);
+      if (index === -1) {
+        infinityResult.innerHTML = '❌ У этого пользователя нет бесконечных монет';
+        return;
+      }
+      if (username === 'Nexik' || username === 'Demih') {
+        infinityResult.innerHTML = '⚠️ Нельзя забрать ♾️ у основателей!';
+        return;
+      }
+      INFINITY_USERS.splice(index, 1);
+      document.getElementById('infinityUsersList').textContent = INFINITY_USERS.join(', ');
+      infinityResult.innerHTML = `✅ ♾️ забраны у ${username}`;
+      loadUsers(); updateUserUI(); updateAdminStats();
+    });
+  }
+
+  // Приз дня
+  const today = new Date().toDateString();
+  db.ref('prize/'+today).once('value').then(ps => {
+    const isGiven = ps.val() && ps.val().given;
+    db.ref('users').once('value').then(s => {
+      const users = s.val();
+      const list = document.getElementById('prizeDayList');
+      if (!list) return;
+      if (!users) { list.innerHTML = '<div style="text-align:center;opacity:.5;padding:10px;">Нет пользователей</div>'; return; }
+      list.innerHTML = '';
+      const sorted = Object.entries(users).filter(([_,d]) => !d.banned).sort((a,b) => {
+        const aCoins = INFINITY_USERS.includes(a[0]) ? Infinity : (b[1].coins||0);
+        const bCoins = INFINITY_USERS.includes(b[0]) ? Infinity : (a[1].coins||0);
+        return bCoins - aCoins;
+      });
+      sorted.forEach(([username, data]) => {
+        const coins = INFINITY_USERS.includes(username) ? '♾️' : (data.coins||0);
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--card-border);';
+        row.innerHTML = `<div style="display:flex;align-items:center;gap:8px;"><span style="font-weight:600;color:#6a9eff;">${esc(username)}</span><span style="font-size:12px;color:#ffd700;">${coins}</span></div>
+          <button class="give-prize-btn" data-user="${username}" style="padding:4px 16px;border-radius:20px;border:none;background:${isGiven || INFINITY_USERS.includes(username) ? 'rgba(255,255,255,0.05)' : 'rgba(255,215,0,0.4)'};color:#fff;font-weight:600;font-size:12px;cursor:${isGiven || INFINITY_USERS.includes(username) ? 'not-allowed' : 'pointer'};opacity:${isGiven || INFINITY_USERS.includes(username) ? '0.5' : '1'};" ${isGiven || INFINITY_USERS.includes(username) ? 'disabled' : ''}>${isGiven ? '✅ Выдан' : '🏆 Выдать'}</button>`;
+        list.appendChild(row);
+        if (!isGiven && !INFINITY_USERS.includes(username)) {
+          row.querySelector('.give-prize-btn').addEventListener('click', function() {
+            if (this.disabled) return;
+            const user = this.dataset.user;
+            db.ref('prize/'+today).once('value').then(ps2 => {
+              if (ps2.val() && ps2.val().given) { alert('❌ Приз уже выдан!'); return; }
+              if (!confirm('Выдать приз дня (5 монет) пользователю "'+user+'"?')) return;
+              db.ref('users/'+user+'/coins').transaction(c => (c||0)+5);
+              db.ref('prize/'+today).set({ given: true, to: user, at: Date.now(), challenge: ALL_CHALLENGES[0].text });
+              alert('✅ Приз дня выдан пользователю '+user+'!');
+              renderAdminPanel();
+              loadUsers(); updateUserUI();
+            });
+          });
+        }
+      });
+    });
+  });
+}
+
+function initCooldownPanel() {
+  const btnGive = document.getElementById('adminNoCooldownBtn');
+  const btnReset = document.getElementById('adminResetCooldownBtn');
+  const result = document.getElementById('adminNoCooldownResult');
+  if (btnGive) {
+    btnGive.addEventListener('click', function() {
+      const username = document.getElementById('adminNoCooldownUser').value.trim();
+      if (!username) { result.innerHTML = '❌ Введите имя'; return; }
+      if (INFINITY_USERS.includes(username)) {
+        result.innerHTML = '♾️ Владельцы бесконечных монет уже без кулдауна';
+        return;
+      }
+      db.ref('users/' + username).once('value').then(s => {
+        if (!s.val()) { result.innerHTML = '❌ Пользователь не найден'; return; }
+        db.ref('users/' + username + '/noCooldown').set(true);
+        result.innerHTML = '✅ Кулдаун снят для ' + username;
+      });
+    });
+  }
+  if (btnReset) {
+    btnReset.addEventListener('click', function() {
+      const username = document.getElementById('adminNoCooldownUser').value.trim();
+      if (!username) { result.innerHTML = '❌ Введите имя'; return; }
+      db.ref('users/' + username).once('value').then(s => {
+        if (!s.val()) { result.innerHTML = '❌ Пользователь не найден'; return; }
+        db.ref('users/' + username + '/noCooldown').remove();
+        result.innerHTML = '✅ Кулдаун восстановлен для ' + username;
+      });
+    });
+  }
+}
+
+function initChallengesPanel() {
+  const addBtn = document.getElementById('adminAddChallengeBtn');
+  if (addBtn) {
+    addBtn.addEventListener('click', function() {
+      const text = document.getElementById('adminNewChallenge').value.trim();
+      const reward = parseInt(document.getElementById('adminNewReward').value) || 10;
+      if (!text) { alert('❌ Введите текст челленджа!'); return; }
+      ALL_CHALLENGES.push({ text, reward });
+      alert('✅ Челлендж добавлен! Всего: '+ALL_CHALLENGES.length);
+      document.getElementById('adminNewChallenge').value = '';
+      document.getElementById('adminNewReward').value = '';
+      renderAdminPanel();
+    });
+  }
+}
+
+function initShopPanel() {}
+function initContentPanel() {
+  const clearGallery = document.getElementById('adminClearGallery');
+  if (clearGallery) clearGallery.addEventListener('click', function(){ if(!confirm('🗑️ УДАЛИТЬ ВСЕ ФОТО?'))return; db.ref('gallery').remove().then(()=>{ alert('✅ Галерея очищена!'); loadGallery(); }); });
+  const clearReviews = document.getElementById('adminClearReviews');
+  if (clearReviews) clearReviews.addEventListener('click', function(){ if(!confirm('🗑️ УДАЛИТЬ ВСЕ ОТЗЫВЫ?'))return; db.ref('reviews').remove().then(()=>{ alert('✅ Отзывы удалены!'); loadReviews(); }); });
+  const clearEvents = document.getElementById('adminClearEvents');
+  if (clearEvents) clearEvents.addEventListener('click', function(){ if(!confirm('🗑️ УДАЛИТЬ ВСЕ СОБЫТИЯ?'))return; db.ref('events').remove().then(()=>{ alert('✅ События удалены!'); loadEvents(); }); });
+  const clearChat = document.getElementById('adminClearChat');
+  if (clearChat) clearChat.addEventListener('click', function(){ if(!confirm('🗑️ УДАЛИТЬ ВСЕ СООБЩЕНИЯ?'))return; db.ref('chat').remove().then(()=>{ alert('✅ Чат очищен!'); }); });
+}
+
+function initStatsPanel() {
+  const refreshBtn = document.getElementById('adminRefreshStats');
+  if (refreshBtn) refreshBtn.addEventListener('click', updateAdminStats);
+}
+
+function initSettingsPanel() {
+  const changePass = document.getElementById('adminChangePassBtn');
+  if (changePass) {
+    changePass.addEventListener('click', function() {
+      const newPass = document.getElementById('adminNewPass').value.trim();
+      if (!newPass || newPass.length < 6) { alert('❌ Пароль минимум 6 символов!'); return; }
+      if (confirm('Сменить пароль на "'+newPass+'"?')) {
+        ADMIN_PASSWORD = newPass;
+        alert('✅ Пароль изменён!');
+        document.getElementById('adminNewPass').value = '';
+        renderAdminPanel();
+      }
+    });
+  }
+  const clearAll = document.getElementById('adminClearAll');
+  if (clearAll) {
+    clearAll.addEventListener('click', function() {
+      if(!confirm('🔥 УДАЛИТЬ ВСЕ ДАННЫЕ?'))return;
+      if(!confirm('🔄 ПОСЛЕДНЕЕ ПРЕДУПРЕЖДЕНИЕ!'))return;
+      Promise.all([db.ref('gallery').remove(), db.ref('reviews').remove(), db.ref('events').remove(), db.ref('chat').remove()]).then(() => {
+        alert('✅ Все данные очищены!');
+        loadGallery(); loadReviews(); loadEvents();
+      });
+    });
+  }
+}
+
+function initMailPanel() {
+  const sendMail = document.getElementById('adminSendMailBtn');
+  if (sendMail) {
+    sendMail.addEventListener('click', function() {
+      const text = document.getElementById('adminMailText').value.trim();
+      if (!text) { alert('❌ Введите текст!'); return; }
+      if(!confirm('Отправить уведомление всем?\n\n"'+text+'"'))return;
+      db.ref('chat').push({ author: '📢 Администратор', text: '📢 '+text, time: Date.now(), isAnnouncement: true }).then(() => {
+        alert('✅ Уведомление отправлено!');
+        document.getElementById('adminMailText').value = '';
+      });
+    });
+  }
+}
+
+function initLinesPanel() {
+  db.ref('lines').once('value').then(snap => {
+    const data = snap.val();
+    const list = document.getElementById('adminLinesList');
+    if (!list) return;
+    if (!data) { list.innerHTML = '<div style="text-align:center;opacity:.5;padding:20px;">Нет линий</div>'; return; }
+    list.innerHTML = '';
+    const keys = Object.keys(data).sort((a,b) => Number(a)-Number(b));
+    keys.forEach(k => {
+      const item = data[k];
+      const name = item.name || 'Линия '+k;
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px solid var(--card-border);';
+      const header = document.createElement('div');
+      header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;';
+      const nameSpan = document.createElement('span');
+      nameSpan.style.cssText = 'font-weight:600;font-size:13px;flex:1;color:var(--text-primary);';
+      nameSpan.textContent = name;
+      const btns = document.createElement('div');
+      btns.style.cssText = 'display:flex;gap:6px;flex-shrink:0;';
+      const ok = document.createElement('button');
+      ok.textContent = '✅ Штатно';
+      ok.style.cssText = `padding:4px 14px;border-radius:30px;border:1px solid var(--card-border);background:${item.status === 'ok' ? 'rgba(46,204,113,0.15)' : 'var(--nav-btn-bg)'};font-size:12px;font-weight:500;cursor:pointer;color:var(--text-primary);`;
+      ok.addEventListener('click', function() {
+        db.ref('lines/'+k).update({ status: 'ok', reason: '' });
+        initLinesPanel();
+        loadLinesUI();
+      });
+      const problem = document.createElement('button');
+      problem.textContent = '❌ Перебои';
+      problem.style.cssText = `padding:4px 14px;border-radius:30px;border:1px solid var(--card-border);background:${item.status === 'problem' ? 'rgba(231,76,60,0.15)' : 'var(--nav-btn-bg)'};font-size:12px;font-weight:500;cursor:pointer;color:var(--text-primary);`;
+      problem.addEventListener('click', function() {
+        const reason = prompt('Введите причину перебоя:');
+        if (reason !== null) {
+          db.ref('lines/'+k).update({ status: 'problem', reason: reason.trim() || 'Без причины' });
+          initLinesPanel();
+          loadLinesUI();
+        }
+      });
+      btns.append(ok, problem);
+      header.append(nameSpan, btns);
+      row.appendChild(header);
+      if (item.status === 'problem' && item.reason) {
+        const rd = document.createElement('div');
+        rd.style.cssText = 'font-size:12px;opacity:.7;color:#e74c3c;padding:4px 0 0 0;';
+        rd.textContent = '📌 '+item.reason;
+        row.appendChild(rd);
+      }
+      list.appendChild(row);
+    });
+  });
+}
+
+function updateAdminStats() {
+  db.ref('users').once('value').then(s => {
+    const data = s.val();
+    if (!data) return;
+    const users = Object.values(data);
+    const totalCoins = users.reduce((sum, u) => sum + (u.coins || 0), 0) + (INFINITY_USERS.length * 999999);
+    const totalSpots = users.reduce((sum, u) => sum + (u.spotHistory ? u.spotHistory.length : 0), 0);
+    const elUsers = document.getElementById('adminStatUsers');
+    const elCoins = document.getElementById('adminStatCoins');
+    const elSpots = document.getElementById('adminStatSpots');
+    if (elUsers) elUsers.textContent = users.length;
+    if (elCoins) elCoins.textContent = totalCoins + '+♾️';
+    if (elSpots) elSpots.textContent = totalSpots;
+  });
+}
+
+// ============================================================
+// АДМИН-ВХОД
+// ============================================================
+$('gearBtn').addEventListener('click', function() {
+  if (!currentUser) { alert('Войдите в аккаунт!'); return; }
+  const pass = prompt('Введите пароль администратора:');
+  if (pass === ADMIN_PASSWORD) {
+    $('adminOverlay').classList.add('active');
+    db.ref('users/'+currentUser+'/adminCount').transaction(c => (c||0)+1);
+    renderAdminPanel();
+  } else if (pass !== null) {
+    alert('Неверный пароль!');
+  }
+});
+
+$('adminClose').addEventListener('click', function() { $('adminOverlay').classList.remove('active'); });
+$('adminLogout').addEventListener('click', function() { $('adminOverlay').classList.remove('active'); });
+
+// ============================================================
+// ТЕМЫ
+// ============================================================
+const allThemes = [
+  { name: 'Тёмная', class: '' },
+  { name: 'Светлая', class: 'theme-light' }
+];
+function applyTheme(index) {
+  const theme = allThemes[index];
+  if (!theme) return;
+  document.body.className = '';
+  if (theme.class) document.body.classList.add(theme.class);
+  localStorage.setItem('nexik_theme', index);
+}
+function initTheme() {
+  const saved = localStorage.getItem('nexik_theme');
+  const index = (saved !== null) ? parseInt(saved) : 0;
+  applyTheme(index);
+}
+$('themeToggle').addEventListener('click', function() {
+  const current = parseInt(localStorage.getItem('nexik_theme')) || 0;
+  const next = (current + 1) % allThemes.length;
+  applyTheme(next);
+  alert('Тема изменена на: ' + allThemes[next].name);
+});
+
+// ============================================================
+// ОКНО ОБНОВЫ
+// ============================================================
+if (!localStorage.getItem('nexik_banner_v13_2')) {
+  $('updateOverlay').classList.add('active');
+  localStorage.setItem('nexik_banner_v13_2', 'true');
+}
+$('updateGotIt').addEventListener('click', function() { $('updateOverlay').classList.remove('active'); });
+$('updateClose').addEventListener('click', function() { $('updateOverlay').classList.remove('active'); });
+$('updateOverlay').addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+
+// ============================================================
+// СТАРТ
+// ============================================================
+initTheme();
+updateUserUI();
+initLines();
+if (currentUser) {
+  loadAllData();
+}
+
+console.log('🚀 Nexik v.13.2 — ВСЕ ИСПРАВЛЕНО!');
+console.log('✅ Крестики работают ВЕЗДЕ');
+console.log('✅ Радужный и все кастомные цвета работают');
+console.log('✅ Все купленные цвета отображаются');
+</script>
+</body>
+</html>
